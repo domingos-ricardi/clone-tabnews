@@ -11,8 +11,6 @@ async function query(queryObject) {
   };
   const client = new Client(credentials);
 
-  //console.log("Credenciais do Postgres: ", credentials);
-
   try {
     await client.connect();
     const result = await client.query(queryObject);
