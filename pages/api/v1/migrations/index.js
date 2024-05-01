@@ -2,34 +2,47 @@ import migrationRunner from "node-pg-migrate";
 import { join } from "node:path";
 import database from "infra/database.js";
 
-export default async function migrations(request, response) {
-  const dbClient = await database.getNewClient();
-  const defaultMigrationsOptions = {
+function getMigrationsOptions(dbClient, liveRun) {
+  return {
     dbClient: dbClient,
-    dryRun: true, //modo de testes
+    dryRun: !liveRun, //Define o modo de execução: TRUE -> modo de teste - FALSE: modo de produção
     dir: join("infra", "migrations"),
     direction: "up",
     verbose: true,
     migrationsTable: "pgmigrations",
   };
+}
 
-  if (request.method === "GET") {
-    const pendingMigrations = await migrationRunner(defaultMigrationsOptions);
-    await dbClient.end();
-    return response.status(200).json(pendingMigrations);
-  }
-
-  if (request.method === "POST") {
-    const migratedMigrations = await migrationRunner({
-      ...defaultMigrationsOptions,
-      dryRun: false,
+export default async function migrations(request, response) {
+  const allowedMethods = ["GET", "POST"];
+  if (!allowedMethods.includes(request.method)) {
+    return response.status(405).json({
+      error: `Method "${request.method}" not allowed`,
     });
-    await dbClient.end();
-
-    if (migratedMigrations.length > 0)
-      return response.status(201).json(migratedMigrations);
-    else return response.status(200).json(migratedMigrations);
   }
 
-  return response.status(405).end();
+  let dbClient;
+
+  try {
+    dbClient = await database.getNewClient();
+    const defaultMigrationsOptions = getMigrationsOptions(
+      dbClient,
+      request.method === "POST",
+    );
+
+    const pendingMigrations = await migrationRunner(defaultMigrationsOptions);
+    let status = 200;
+
+    if (request.method === "POST") {
+      if (pendingMigrations.length > 0) status = 201;
+    }
+
+    return response.status(status).json(pendingMigrations);
+  } catch (err) {
+    return response.status(500).json({
+      error: err,
+    });
+  } finally {
+    if (dbClient !== undefined) await dbClient.end();
+  }
 }
