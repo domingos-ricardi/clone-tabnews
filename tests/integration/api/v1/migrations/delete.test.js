@@ -3,6 +3,4 @@ test("DELETE to /api/v1/migrations should return 405", async () => {
     method: "DELETE",
   });
   expect(response.status).toBe(405);
-  const responseBody = await response.json();
-  console.log(responseBody);
 });
