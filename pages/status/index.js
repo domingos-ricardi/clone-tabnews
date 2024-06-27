@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import style from "../status/status.module.css";
 
 export default function Status() {
   const [data, setData] = useState(null);
@@ -16,7 +17,8 @@ export default function Status() {
   if (isLoading) return <p>Loading...</p>;
 
   return (
-    <div>
+    <div className={style.main}>
+      <div className={style.title}>Tab Status</div>
       <div>Última Atualização em: {data.update_at}</div>
       <div>
         Versão do banco de dados atual: {data.dependencies.database.version}
