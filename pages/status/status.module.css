@@ -1,0 +1,12 @@
+.main {
+  text-align: -webkit-center;
+}
+
+.title {
+  border: 1px solid darkgray;
+  border-radius: 10px;
+  background-color: aquamarine;
+  width: 50%;
+  font-size: xxx-large;
+  margin: 3% 0 5% 0;
+}
