@@ -17,7 +17,7 @@ export default function Status() {
 
   return (
     <div>
-      <div>Última Atualização em: {data.update_at}</div>
+      <div class="classe-da-div">Última Atualização em: {data.update_at}</div>
       <div>
         Versão do banco de dados atual: {data.dependencies.database.version}
       </div>

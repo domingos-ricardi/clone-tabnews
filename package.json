@@ -10,7 +10,7 @@
     "services:stop": "docker compose -f infra/compose.yaml stop",
     "lint:check": "prettier --check .",
     "lint:fix": "prettier --write .",
-    "concurrently-execute": "concurrently -n N,J --hide N -k -s command-J 'next dev' 'jest --runInBand --verbose'",
+    "concurrently-execute": "concurrently -n N,J --hide N -k -s command-J \"next dev\" \"jest --runInBand --verbose\"",
     "test": "jest --runInBand",
     "test:watch": "jest --watchAll --runInBand",
     "start-and-test": "npm run services:up && npm run concurrently-execute",
