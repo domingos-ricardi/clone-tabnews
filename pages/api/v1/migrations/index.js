@@ -49,7 +49,7 @@ export default async function migrations(request, response) {
     jsonResult = error;
   } finally {
     if (dbClient !== undefined) await dbClient.end();
-
-    return response.status(status).json(jsonResult);
   }
+
+  return response.status(status).json(jsonResult);
 }
