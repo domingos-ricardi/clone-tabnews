@@ -1,6 +1,13 @@
-test("DELETE to /api/v1/migrations should return 405", async () => {
-  const response = await fetch("http://localhost:3000/api/v1/migrations", {
-    method: "DELETE",
+describe("DELETE to /api/v1/migrations", () => {
+  const url = "http://localhost:3000/api/v1/migrations";
+  const method = "DELETE";
+
+  describe("Anonymous user", () => {
+    test("Running pending migrations", async () => {
+      const response = await fetch(url, {
+        method: method,
+      });
+      expect(response.status).toBe(405);
+    });
   });
-  expect(response.status).toBe(405);
 });
