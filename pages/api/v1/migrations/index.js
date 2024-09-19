@@ -1,5 +1,5 @@
 import migrationRunner from "node-pg-migrate";
-import { join } from "node:path";
+import { resolve } from "node:path";
 import database from "infra/database.js";
 
 const ALLOWED_METHODS = ["GET", "POST"];
@@ -9,7 +9,7 @@ function getMigrationsOptions(dbClient, liveRun) {
   return {
     dbClient: dbClient,
     dryRun: !liveRun, //Define o modo de execução: TRUE -> modo de teste - FALSE: modo de produção
-    dir: join("infra", "migrations"),
+    dir: resolve("infra", "migrations"),
     direction: "up",
     verbose: true,
     migrationsTable: "pgmigrations",
