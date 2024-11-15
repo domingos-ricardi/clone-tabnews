@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import style from "../status/status.module.css";
+import CapsLock from "components/caps-lock";
 
 export default function Status() {
   const [data, setData] = useState(null);
@@ -23,7 +24,7 @@ export default function Status() {
       <div>
         Versão do banco de dados atual: {data.dependencies.database.version}
       </div>
-      <div>Situação atual do sistema: OK</div>
+      <CapsLock text="Situação atual do sistema: ok" />
     </div>
   );
 }
