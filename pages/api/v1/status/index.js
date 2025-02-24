@@ -29,6 +29,7 @@ async function status(request, response) {
     });
   } catch (error) {
     const publicError = new InternalServerError({ cause: error });
+    console.error(publicError);
     response.status(publicError.statusCode).json(publicError);
   }
 }
