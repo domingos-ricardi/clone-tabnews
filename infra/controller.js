@@ -1,5 +1,7 @@
-import { InternalServerError } from "./errors/db-errors.js";
-import { MethodNotAllowedError } from "./errors/api-errors.js";
+import {
+  MethodNotAllowedError,
+  InternalServerError,
+} from "./errors/api-errors.js";
 
 function onNoMatchHandler(request, response) {
   const publicError = new MethodNotAllowedError();
