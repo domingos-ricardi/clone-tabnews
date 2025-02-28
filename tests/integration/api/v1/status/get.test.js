@@ -25,6 +25,30 @@ describe("GET to /api/v1/status", () => {
   });
 });
 
+describe("POST to /api/v1/status", () => {
+  const url = "http://localhost:3000/api/v1/status";
+  const method = "POST";
+
+  describe("Anonymous user", () => {
+    test("Retrieving current system status", async () => {
+      const response = await fetch(url, {
+        method: method,
+      });
+
+      expect(response.status).toEqual(405);
+
+      const responseBody = await response.json();
+
+      expect(responseBody).toEqual({
+        name: "MethodNotAllowedError",
+        message: "Método não permitido para este endpoint",
+        action: "Verifique se o método HTTP enviado é válido para este endpoit",
+        statusCode: 405,
+      });
+    });
+  });
+});
+
 // eslint-disable-next-line jest/no-commented-out-tests
 // test.only("SQL Injectio test", async () => {
 //   await fetch(
