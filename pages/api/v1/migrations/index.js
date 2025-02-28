@@ -1,9 +1,16 @@
+import { createRouter } from "next-connect";
 import migrationRunner from "node-pg-migrate";
 import { resolve } from "node:path";
 import database from "infra/database.js";
+import controller from "infra/controller.js";
 
-const ALLOWED_METHODS = ["GET", "POST"];
 let dbClient;
+
+const router = createRouter();
+router.get(getHandler);
+router.post(postHandler);
+
+export default router.handler(controller.errorHandlers);
 
 function getMigrationsOptions(dbClient, liveRun) {
   return {
@@ -26,30 +33,26 @@ async function getPendingMigrations(method) {
   return await migrationRunner(defaultMigrationsOptions);
 }
 
-export default async function migrations(request, response) {
-  let status = 200;
-  let jsonResult;
+async function getHandler(request, response) {
+  return migrations("GET", response);
+}
 
-  if (!ALLOWED_METHODS.includes(request.method)) {
-    return response
-      .status(405)
-      .json({ error: `Method "${request.method}" not allowed` });
-  }
+async function postHandler(request, response) {
+  return migrations("POST", response);
+}
+
+async function migrations(method, response) {
+  let statusCode = 200;
 
   try {
-    const pendingMigrations = await getPendingMigrations(request.method);
+    const pendingMigrations = await getPendingMigrations(method);
 
-    if (request.method === "POST") {
-      if (pendingMigrations.length > 0) status = 201;
+    if (method === "POST") {
+      if (pendingMigrations.length > 0) statusCode = 201;
     }
 
-    jsonResult = pendingMigrations;
-  } catch (error) {
-    status = 500;
-    jsonResult = error;
+    return response.status(statusCode).json(pendingMigrations);
   } finally {
     if (dbClient !== undefined) await dbClient.end();
   }
-
-  return response.status(status).json(jsonResult);
 }
