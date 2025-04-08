@@ -41,5 +41,22 @@ describe("POST to /api/v1/users", () => {
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
     });
+
+    test("Duplicated email", async () => {
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: "emailduplicado",
+          email: "doma@ludo.com.br",
+          password: "senha@123",
+        }),
+      });
+      expect(response.status).toBe(400);
+
+      //const responseBody = await response.json();
+    });
   });
 });

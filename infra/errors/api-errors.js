@@ -34,3 +34,21 @@ export class InternalServerError extends Error {
     };
   }
 }
+
+export class ValidationError extends Error {
+  constructor(message, action) {
+    super(message);
+    this.name = "ValidationError";
+    this.action = action;
+    this.statusCode = 400;
+  }
+
+  toJSON() {
+    return {
+      name: this.name,
+      message: this.message,
+      action: this.action,
+      statusCode: this.statusCode,
+    };
+  }
+}
