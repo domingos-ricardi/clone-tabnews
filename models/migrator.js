@@ -10,7 +10,7 @@ function getMigrationsOptions(dbClient, liveRun) {
     dryRun: !liveRun, //Define o modo de execução: TRUE -> modo de teste - FALSE: modo de produção
     dir: resolve("infra", "migrations"),
     direction: "up",
-    verbose: true,
+    log: () => {},
     migrationsTable: "pgmigrations",
   };
 }
