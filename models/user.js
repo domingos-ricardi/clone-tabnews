@@ -2,12 +2,8 @@ import database from "infra/database";
 import { ValidationError } from "infra/errors/api-errors";
 
 async function create(userInputValues) {
-  const user = getUserByEmail(userInputValues.email);
-  if (user != undefined)
-    throw new ValidationError({
-      message: "Não foi possível cadastrar novo usuário.",
-      action: "Verifique os dados informados e tente novamente.",
-    });
+  const validateUser = await validationUser(userInputValues);
+  if (!validateUser) throw new ValidationError();
 
   const newUser = await runInsertQuery(userInputValues);
   return newUser;
@@ -27,6 +23,15 @@ async function create(userInputValues) {
   }
 }
 
+async function validationUser(input) {
+  if (!input.email || !input.username) return false;
+
+  const userbyEmail = await getUserByEmail(input.email);
+  const userByUsername = await getUserByUsername(input.username);
+
+  return userbyEmail == undefined && userByUsername == undefined;
+}
+
 async function getUserByEmail(email) {
   const result = await database.query({
     text: `SELECT * 
@@ -34,6 +39,18 @@ async function getUserByEmail(email) {
            WHERE LOWER(email) = LOWER($1);`,
     values: [email],
   });
+
+  return result.rows[0];
+}
+
+async function getUserByUsername(username) {
+  const result = await database.query({
+    text: `SELECT * 
+           FROM users 
+           WHERE LOWER(username) = LOWER($1);`,
+    values: [username],
+  });
+
   return result.rows[0];
 }
 

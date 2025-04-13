@@ -1,6 +1,7 @@
 import {
   MethodNotAllowedError,
   InternalServerError,
+  ValidationError,
 } from "./errors/api-errors.js";
 
 function onNoMatchHandler(request, response) {
@@ -9,6 +10,10 @@ function onNoMatchHandler(request, response) {
 }
 
 function onErrorHandler(error, request, response) {
+  if (error instanceof ValidationError) {
+    return response.status(error.statusCode).json(error);
+  }
+
   const publicError = new InternalServerError({ cause: error });
   console.error(publicError);
   response.status(publicError.statusCode).json(publicError);

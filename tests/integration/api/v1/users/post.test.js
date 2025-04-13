@@ -50,13 +50,68 @@ describe("POST to /api/v1/users", () => {
         },
         body: JSON.stringify({
           username: "emailduplicado",
-          email: "doma@ludo.com.br",
+          email: "Doma@LUDO.com.br",
           password: "senha@123",
         }),
       });
       expect(response.status).toBe(400);
 
-      //const responseBody = await response.json();
+      const responseBody = await response.json();
+
+      expect(responseBody).toEqual({
+        name: "ValidationError",
+        message: "Não foi possível registrar dados do usuário.",
+        action: "Verifique os dados informados e tente novamente.",
+        statusCode: 400,
+      });
+    });
+
+    test("Duplicated username", async () => {
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: "doma",
+          email: "mail@test.com.br",
+          password: "senha@123",
+        }),
+      });
+      expect(response.status).toBe(400);
+
+      const responseBody = await response.json();
+
+      expect(responseBody).toEqual({
+        name: "ValidationError",
+        message: "Não foi possível registrar dados do usuário.",
+        action: "Verifique os dados informados e tente novamente.",
+        statusCode: 400,
+      });
+    });
+
+    test("With unique and invalid data", async () => {
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: "",
+          email: "mail@test.com.br",
+          password: "senha@123",
+        }),
+      });
+      expect(response.status).toBe(400);
+
+      const responseBody = await response.json();
+
+      expect(responseBody).toEqual({
+        name: "ValidationError",
+        message: "Não foi possível registrar dados do usuário.",
+        action: "Verifique os dados informados e tente novamente.",
+        statusCode: 400,
+      });
     });
   });
 });
