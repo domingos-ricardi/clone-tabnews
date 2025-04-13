@@ -1,5 +1,5 @@
 import database from "infra/database";
-import { ValidationError } from "infra/errors/api-errors";
+import { ValidationError, NotFoundError } from "infra/errors/api-errors";
 
 async function create(userInputValues) {
   const validateUser = await validationUser(userInputValues);
@@ -23,6 +23,12 @@ async function create(userInputValues) {
   }
 }
 
+async function getByUsername(username) {
+  const user = await getUserByUsername(username);
+  if (user == undefined) throw new NotFoundError();
+  return user;
+}
+
 async function validationUser(input) {
   if (!input.email || !input.username) return false;
 
@@ -36,7 +42,7 @@ async function getUserByEmail(email) {
   const result = await database.query({
     text: `SELECT * 
            FROM users 
-           WHERE LOWER(email) = LOWER($1);`,
+           WHERE LOWER(email) = LOWER($1) LIMIT 1;`,
     values: [email],
   });
 
@@ -47,7 +53,7 @@ async function getUserByUsername(username) {
   const result = await database.query({
     text: `SELECT * 
            FROM users 
-           WHERE LOWER(username) = LOWER($1);`,
+           WHERE LOWER(username) = LOWER($1) LIMIT 1;`,
     values: [username],
   });
 
@@ -56,6 +62,7 @@ async function getUserByUsername(username) {
 
 const user = {
   create,
+  getByUsername,
 };
 
 export default user;

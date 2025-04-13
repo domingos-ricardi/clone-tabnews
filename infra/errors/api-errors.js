@@ -27,3 +27,12 @@ export class ValidationError extends BaseError {
     this.statusCode = 400;
   }
 }
+
+export class NotFoundError extends BaseError {
+  constructor() {
+    super("Não foi possível encontrar o usuário.");
+    this.name = "NotFoundError";
+    this.action = "Verifique os dados informados e tente novamente.";
+    this.statusCode = 404;
+  }
+}

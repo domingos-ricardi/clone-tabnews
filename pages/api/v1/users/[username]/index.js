@@ -3,13 +3,12 @@ import controller from "infra/controller.js";
 import user from "models/user.js";
 
 const router = createRouter();
-router.post(postHandler);
+router.get(getHandler);
 
 export default router.handler(controller.errorHandlers);
 
-async function postHandler(request, response) {
-  const userInput = request.body;
-  const newUser = await user.create(userInput);
-
-  return response.status(201).json(newUser);
+async function getHandler(request, response) {
+  const username = request.query.username;
+  const founded = await user.getByUsername(username);
+  return response.status(200).json(founded);
 }
