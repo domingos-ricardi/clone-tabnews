@@ -1,9 +1,10 @@
 import database from "infra/database";
+import criptography from "models/criptography.js";
 import { ValidationError, NotFoundError } from "infra/errors/api-errors";
 
 async function create(userInputValues) {
-  const validateUser = await validationUser(userInputValues);
-  if (!validateUser) throw new ValidationError();
+  await validationUser(userInputValues);
+  await hashPasswordToInput(userInputValues);
 
   const newUser = await runInsertQuery(userInputValues);
   return newUser;
@@ -30,12 +31,19 @@ async function getByUsername(username) {
 }
 
 async function validationUser(input) {
-  if (!input.email || !input.username) return false;
+  if (!input.email || !input.username)
+    throw new ValidationError();
 
   const userbyEmail = await getUserByEmail(input.email);
   const userByUsername = await getUserByUsername(input.username);
 
-  return userbyEmail == undefined && userByUsername == undefined;
+  if(!(userbyEmail == undefined && userByUsername == undefined))
+    throw new ValidationError();
+}
+
+async function hashPasswordToInput(input) {
+  const hashPass = await criptography.hash(input.password);
+  input.password = hashPass;
 }
 
 async function getUserByEmail(email) {
