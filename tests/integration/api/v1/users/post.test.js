@@ -1,5 +1,7 @@
 import { version as uuidVersion } from "uuid";
 import orchestrator from "tests/orchestrator";
+import user from "models/user.js";
+import criptography from "models/criptography.js";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -8,7 +10,7 @@ beforeAll(async () => {
 });
 
 describe("POST to /api/v1/users", () => {
-  const url = "http://localhost:3000/api/v1/users";
+  const url = process.env.BASE_API_V1 + "/users";
   const method = "POST";
 
   describe("Anonymous user", () => {
@@ -32,7 +34,7 @@ describe("POST to /api/v1/users", () => {
         id: responseBody.id,
         username: "doma",
         email: "doma@ludo.com.br",
-        password: "senha@123",
+        password: responseBody.password,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });
@@ -40,6 +42,19 @@ describe("POST to /api/v1/users", () => {
       expect(uuidVersion(responseBody.id)).toBe(4);
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
+
+      const userInDB = await user.getByUsername("doma");
+      const passwordMatch = await criptography.compare(
+        "senha@123",
+        userInDB.password,
+      );
+      expect(passwordMatch).toBe(true);
+
+      const passwordNotMatch = await criptography.compare(
+        "senhaErrada",
+        userInDB.password,
+      );
+      expect(passwordNotMatch).toBe(false);
     });
 
     test("Duplicated email", async () => {

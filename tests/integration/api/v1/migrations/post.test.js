@@ -6,7 +6,7 @@ beforeAll(async () => {
 });
 
 describe("POST to /api/v1/migrations", () => {
-  const url = "http://localhost:3000/api/v1/migrations";
+  const url = process.env.BASE_API_V1 + "/migrations";
   const method = "POST";
 
   describe("Anonymous user", () => {

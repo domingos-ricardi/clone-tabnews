@@ -8,7 +8,7 @@ beforeAll(async () => {
 });
 
 describe("GET to /api/v1/users/[username]", () => {
-  const url = "http://localhost:3000/api/v1/users";
+  const url = process.env.BASE_API_V1 + "/users";
 
   describe("Anonymous user", () => {
     test("With exact case match", async () => {
@@ -33,7 +33,7 @@ describe("GET to /api/v1/users/[username]", () => {
         id: responseBody.id,
         username: "SameCase",
         email: "SameCase@ludo.com.br",
-        password: "senha@123",
+        password: responseBody.password,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });
@@ -65,7 +65,7 @@ describe("GET to /api/v1/users/[username]", () => {
         id: responseBody.id,
         username: "DiffCase",
         email: "DiffCase@ludo.com.br",
-        password: "senha@123",
+        password: responseBody.password,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });

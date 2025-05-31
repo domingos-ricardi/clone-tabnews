@@ -5,7 +5,7 @@ beforeAll(async () => {
 });
 
 describe("GET to /api/v1/status", () => {
-  const url = "http://localhost:3000/api/v1/status";
+  const url = process.env.BASE_API_V1 + "/status";
 
   describe("Anonymous user", () => {
     test("Retrieving current system status", async () => {
@@ -26,7 +26,7 @@ describe("GET to /api/v1/status", () => {
 });
 
 describe("POST to /api/v1/status", () => {
-  const url = "http://localhost:3000/api/v1/status";
+  const url = process.env.BASE_API_V1 + "/status";
   const method = "POST";
 
   describe("Anonymous user", () => {
@@ -52,6 +52,6 @@ describe("POST to /api/v1/status", () => {
 // eslint-disable-next-line jest/no-commented-out-tests
 // test.only("SQL Injectio test", async () => {
 //   await fetch(
-//     "http://localhost:3000/api/v1/status?dbname='; SELECT pg_sleep(4);; --",
+//     process.env.BASE_API_V1 +  "/status?dbname='; SELECT pg_sleep(4);; --",
 //   );
 // });
