@@ -10,7 +10,7 @@ beforeAll(async () => {
 });
 
 describe("POST to /api/v1/users", () => {
-  const url = "http://localhost:3000/api/v1/users";
+  const url = process.env.BASE_API_V1 +  "/users";
   const method = "POST";
 
   describe("Anonymous user", () => {
