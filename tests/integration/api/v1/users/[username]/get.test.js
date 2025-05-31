@@ -12,16 +12,8 @@ describe("GET to /api/v1/users/[username]", () => {
 
   describe("Anonymous user", () => {
     test("With exact case match", async () => {
-      await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "SameCase",
-          email: "SameCase@ludo.com.br",
-          password: "senha@123",
-        }),
+      const userCreated = await orchestrator.createUser({
+        username: "SameCase",
       });
 
       const response = await fetch(url + "/SameCase");
@@ -32,7 +24,7 @@ describe("GET to /api/v1/users/[username]", () => {
       expect(responseBody).toEqual({
         id: responseBody.id,
         username: "SameCase",
-        email: "SameCase@ludo.com.br",
+        email: userCreated.email,
         password: responseBody.password,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
@@ -44,16 +36,8 @@ describe("GET to /api/v1/users/[username]", () => {
     });
 
     test("With case mismatch", async () => {
-      await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "DiffCase",
-          email: "DiffCase@ludo.com.br",
-          password: "senha@123",
-        }),
+      const userCreated = await orchestrator.createUser({
+        username: "DiffCase",
       });
 
       const response = await fetch(url + "/diffcase");
@@ -64,7 +48,7 @@ describe("GET to /api/v1/users/[username]", () => {
       expect(responseBody).toEqual({
         id: responseBody.id,
         username: "DiffCase",
-        email: "DiffCase@ludo.com.br",
+        email: userCreated.email,
         password: responseBody.password,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
