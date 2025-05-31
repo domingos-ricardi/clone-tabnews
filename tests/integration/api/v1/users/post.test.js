@@ -10,7 +10,7 @@ beforeAll(async () => {
 });
 
 describe("POST to /api/v1/users", () => {
-  const url = process.env.BASE_API_V1 +  "/users";
+  const url = process.env.BASE_API_V1 + "/users";
   const method = "POST";
 
   describe("Anonymous user", () => {
@@ -43,11 +43,17 @@ describe("POST to /api/v1/users", () => {
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
 
-      const userInDB = await user.getByUsername('doma');
-      const passwordMatch = await criptography.compare("senha@123", userInDB.password);
+      const userInDB = await user.getByUsername("doma");
+      const passwordMatch = await criptography.compare(
+        "senha@123",
+        userInDB.password,
+      );
       expect(passwordMatch).toBe(true);
 
-      const passwordNotMatch = await criptography.compare("senhaErrada", userInDB.password);
+      const passwordNotMatch = await criptography.compare(
+        "senhaErrada",
+        userInDB.password,
+      );
       expect(passwordNotMatch).toBe(false);
     });
 

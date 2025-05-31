@@ -31,13 +31,12 @@ async function getByUsername(username) {
 }
 
 async function validationUser(input) {
-  if (!input.email || !input.username)
-    throw new ValidationError();
+  if (!input.email || !input.username) throw new ValidationError();
 
   const userbyEmail = await getUserByEmail(input.email);
   const userByUsername = await getUserByUsername(input.username);
 
-  if(!(userbyEmail == undefined && userByUsername == undefined))
+  if (!(userbyEmail == undefined && userByUsername == undefined))
     throw new ValidationError();
 }
 

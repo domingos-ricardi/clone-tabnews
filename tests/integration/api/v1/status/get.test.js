@@ -5,7 +5,7 @@ beforeAll(async () => {
 });
 
 describe("GET to /api/v1/status", () => {
-  const url = process.env.BASE_API_V1 +  "/status";
+  const url = process.env.BASE_API_V1 + "/status";
 
   describe("Anonymous user", () => {
     test("Retrieving current system status", async () => {
@@ -26,7 +26,7 @@ describe("GET to /api/v1/status", () => {
 });
 
 describe("POST to /api/v1/status", () => {
-  const url = process.env.BASE_API_V1 +  "/status";
+  const url = process.env.BASE_API_V1 + "/status";
   const method = "POST";
 
   describe("Anonymous user", () => {

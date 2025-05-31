@@ -8,7 +8,7 @@ beforeAll(async () => {
 });
 
 describe("GET to /api/v1/users/[username]", () => {
-  const url = process.env.BASE_API_V1 +  "/users";
+  const url = process.env.BASE_API_V1 + "/users";
 
   describe("Anonymous user", () => {
     test("With exact case match", async () => {

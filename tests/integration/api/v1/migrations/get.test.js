@@ -6,7 +6,7 @@ beforeAll(async () => {
 });
 
 describe("GET to /api/v1/migrations", () => {
-  const url = process.env.BASE_API_V1 +  "/migrations";
+  const url = process.env.BASE_API_V1 + "/migrations";
 
   describe("Anonymous user", () => {
     test("Retrieving pending migrations", async () => {
