@@ -29,13 +29,15 @@ async function update(username, userInputValues) {
   const currentUser = await findOneByUsername(username);
   await validationUserMail(userInputValues);
 
-  if ("username" in userInputValues && username.toLowerCase() !== userInputValues.username.toLowerCase())
+  if (
+    "username" in userInputValues &&
+    username.toLowerCase() !== userInputValues.username.toLowerCase()
+  )
     await validationUserName(userInputValues);
 
-  if ("password" in userInputValues)
-    await hashPasswordToInput(userInputValues);
+  if ("password" in userInputValues) await hashPasswordToInput(userInputValues);
 
-  const userWithNewValues = {...currentUser, ...userInputValues};
+  const userWithNewValues = { ...currentUser, ...userInputValues };
   const updatedUser = await runUpdateQuery(userWithNewValues);
   return updatedUser;
 
@@ -53,7 +55,7 @@ async function update(username, userInputValues) {
         userInputValues.id,
         userInputValues.username,
         userInputValues.email,
-        userInputValues.password
+        userInputValues.password,
       ],
     });
     return result.rows[0];
@@ -68,17 +70,14 @@ async function findOneByUsername(username) {
 
 async function validationUserMail(input) {
   if ("email" in input) {
-    if (!input.email) 
-     throw new ValidationError();
-    else
-      await validateUniqueUserMail(input.email);
+    if (!input.email) throw new ValidationError();
+    else await validateUniqueUserMail(input.email);
   }
 }
 
 async function validationUserName(input) {
   if ("username" in input) {
-    if (!input.username) 
-     throw new ValidationError();
+    if (!input.username) throw new ValidationError();
     else {
       await validateUniqueUserName(input.username);
     }
@@ -92,8 +91,8 @@ async function hashPasswordToInput(input) {
 
 // async function getUserByEmail(email) {
 //   const result = await database.query({
-//     text: `SELECT * 
-//            FROM users 
+//     text: `SELECT *
+//            FROM users
 //            WHERE LOWER(email) = LOWER($1) LIMIT 1;`,
 //     values: [email],
 //   });
@@ -120,8 +119,7 @@ async function validateUniqueUserName(username) {
     values: [username],
   });
 
-  if (result.rowCount > 0)
-    throw new ValidationError()  
+  if (result.rowCount > 0) throw new ValidationError();
 }
 
 async function validateUniqueUserMail(email) {
@@ -132,8 +130,7 @@ async function validateUniqueUserMail(email) {
     values: [email],
   });
 
-  if (result.rowCount > 0)
-    throw new ValidationError()  
+  if (result.rowCount > 0) throw new ValidationError();
 }
 
 const user = {

@@ -14,11 +14,9 @@ describe("PATCH to /api/v1/users/[username]", () => {
 
   describe("Anonymous user", () => {
     test("With nonexist 'username'", async () => {
-      const response = await fetch(url + "/inexistinguser",
-        {
-          method: "PATCH"
-        }
-      );
+      const response = await fetch(url + "/inexistinguser", {
+        method: "PATCH",
+      });
       expect(response.status).toBe(404);
 
       const responseBody = await response.json();
@@ -62,7 +60,7 @@ describe("PATCH to /api/v1/users/[username]", () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: "user1"
+          username: "user1",
         }),
       });
 
@@ -109,7 +107,7 @@ describe("PATCH to /api/v1/users/[username]", () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: "email1@test.com.br"
+          email: "email1@test.com.br",
         }),
       });
 
@@ -144,7 +142,7 @@ describe("PATCH to /api/v1/users/[username]", () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: "uniqueUser2"
+          username: "uniqueUser2",
         }),
       });
 
@@ -165,7 +163,6 @@ describe("PATCH to /api/v1/users/[username]", () => {
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
       expect(responseBody.updated_at > responseBody.created_at).toBe(true);
-
     });
 
     test("With unique 'email'", async () => {
@@ -187,7 +184,7 @@ describe("PATCH to /api/v1/users/[username]", () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: "uniqueEmail2@test.com.br"
+          email: "uniqueEmail2@test.com.br",
         }),
       });
 
@@ -208,7 +205,6 @@ describe("PATCH to /api/v1/users/[username]", () => {
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
       expect(responseBody.updated_at > responseBody.created_at).toBe(true);
-
     });
 
     test("With new 'password'", async () => {
@@ -230,7 +226,7 @@ describe("PATCH to /api/v1/users/[username]", () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          password: "newPass2"
+          password: "newPass2",
         }),
       });
 
@@ -264,7 +260,6 @@ describe("PATCH to /api/v1/users/[username]", () => {
         userInDB.password,
       );
       expect(passwordNotMatch).toBe(false);
-
     });
   });
 });
