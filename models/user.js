@@ -3,7 +3,8 @@ import criptography from "models/criptography.js";
 import { ValidationError, NotFoundError } from "infra/errors/api-errors";
 
 async function create(userInputValues) {
-  await validationUser(userInputValues);
+  await validationUserMail(userInputValues);
+  await validationUserName(userInputValues);
   await hashPasswordToInput(userInputValues);
 
   const newUser = await runInsertQuery(userInputValues);
@@ -24,20 +25,63 @@ async function create(userInputValues) {
   }
 }
 
-async function getByUsername(username) {
+async function update(username, userInputValues) {
+  const currentUser = await findOneByUsername(username);
+  await validationUserMail(userInputValues);
+
+  if (
+    "username" in userInputValues &&
+    username.toLowerCase() !== userInputValues.username.toLowerCase()
+  )
+    await validationUserName(userInputValues);
+
+  if ("password" in userInputValues) await hashPasswordToInput(userInputValues);
+
+  const userWithNewValues = { ...currentUser, ...userInputValues };
+  const updatedUser = await runUpdateQuery(userWithNewValues);
+  return updatedUser;
+
+  async function runUpdateQuery(userInputValues) {
+    const result = await database.query({
+      text: `UPDATE users 
+             SET 
+              username = $2, 
+              email = $3, 
+              password = $4, 
+              updated_at = timezone('utc', now()) 
+             WHERE id = $1 
+             RETURNING *;`,
+      values: [
+        userInputValues.id,
+        userInputValues.username,
+        userInputValues.email,
+        userInputValues.password,
+      ],
+    });
+    return result.rows[0];
+  }
+}
+
+async function findOneByUsername(username) {
   const user = await getUserByUsername(username);
   if (user == undefined) throw new NotFoundError();
   return user;
 }
 
-async function validationUser(input) {
-  if (!input.email || !input.username) throw new ValidationError();
+async function validationUserMail(input) {
+  if ("email" in input) {
+    if (!input.email) throw new ValidationError();
+    else await validateUniqueUserMail(input.email);
+  }
+}
 
-  const userbyEmail = await getUserByEmail(input.email);
-  const userByUsername = await getUserByUsername(input.username);
-
-  if (!(userbyEmail == undefined && userByUsername == undefined))
-    throw new ValidationError();
+async function validationUserName(input) {
+  if ("username" in input) {
+    if (!input.username) throw new ValidationError();
+    else {
+      await validateUniqueUserName(input.username);
+    }
+  }
 }
 
 async function hashPasswordToInput(input) {
@@ -45,16 +89,16 @@ async function hashPasswordToInput(input) {
   input.password = hashPass;
 }
 
-async function getUserByEmail(email) {
-  const result = await database.query({
-    text: `SELECT * 
-           FROM users 
-           WHERE LOWER(email) = LOWER($1) LIMIT 1;`,
-    values: [email],
-  });
+// async function getUserByEmail(email) {
+//   const result = await database.query({
+//     text: `SELECT *
+//            FROM users
+//            WHERE LOWER(email) = LOWER($1) LIMIT 1;`,
+//     values: [email],
+//   });
 
-  return result.rows[0];
-}
+//   return result.rows[0];
+// }
 
 async function getUserByUsername(username) {
   const result = await database.query({
@@ -67,9 +111,32 @@ async function getUserByUsername(username) {
   return result.rows[0];
 }
 
+async function validateUniqueUserName(username) {
+  const result = await database.query({
+    text: `SELECT username 
+           FROM users 
+           WHERE LOWER(username) = LOWER($1);`,
+    values: [username],
+  });
+
+  if (result.rowCount > 0) throw new ValidationError();
+}
+
+async function validateUniqueUserMail(email) {
+  const result = await database.query({
+    text: `SELECT email 
+           FROM users 
+           WHERE LOWER(email) = LOWER($1);`,
+    values: [email],
+  });
+
+  if (result.rowCount > 0) throw new ValidationError();
+}
+
 const user = {
   create,
-  getByUsername,
+  update,
+  findOneByUsername,
 };
 
 export default user;
