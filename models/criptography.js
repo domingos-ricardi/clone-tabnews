@@ -7,7 +7,7 @@ function getNumberOfRounds() {
 }
 
 function setPepper(pass) {
-  return process.env.NODE_ENV !== 'development' ? 
+  return process.env.NODE_ENV === 'production' ? 
           process.env.PEPPER_KEY + pass : 
           pepper + pass;
 }
@@ -19,7 +19,8 @@ async function hash(password) {
 }
 
 async function compare(providerPassword, storedHashpass) {
-  return await bcryptjs.compare(providerPassword, storedHashpass);
+  const peppered = setPepper(providerPassword);
+  return await bcryptjs.compare(peppered, storedHashpass);
 }
 
 const criptography = {
