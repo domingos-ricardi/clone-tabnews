@@ -36,3 +36,21 @@ export class NotFoundError extends BaseError {
     this.statusCode = 404;
   }
 }
+
+export class UnauthorizedError extends BaseError {
+  constructor() {
+    super("Dados de autenticação não conferem.");
+    this.name = "UnauthorizedError";
+    this.action = "Verifique se os dados enviados estão corretos.";
+    this.statusCode = 401;
+  }
+}
+
+export class NotMatchError extends BaseError {
+  constructor() {
+    super("Dados de autenticação não conferem.");
+    this.name = "NotMatchError";
+    this.action = "Verifique se os dados enviados estão corretos.";
+    this.statusCode = 401;
+  }
+}
