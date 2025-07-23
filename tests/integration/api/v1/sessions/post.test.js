@@ -134,14 +134,14 @@ describe("POST to /api/v1/sessions", () => {
 
       const parsedCookies = setCookieParser(response, {
         map: true,
-      })
+      });
 
       expect(parsedCookies.session_id).toEqual({
         name: "session_id",
         value: responseBody.token,
         maxAge: session.EXPIRATION_IN_MILISECONDS / 1000,
         path: "/",
-        httpOnly: true
+        httpOnly: true,
       });
     });
   });
