@@ -68,6 +68,12 @@ async function findOneByUsername(username) {
   return user;
 }
 
+async function findOneByEmail(email) {
+  const user = await getUserByEmail(email);
+  if (user == undefined) throw new NotFoundError();
+  return user;
+}
+
 async function validationUserMail(input) {
   if ("email" in input) {
     if (!input.email) throw new ValidationError();
@@ -89,16 +95,16 @@ async function hashPasswordToInput(input) {
   input.password = hashPass;
 }
 
-// async function getUserByEmail(email) {
-//   const result = await database.query({
-//     text: `SELECT *
-//            FROM users
-//            WHERE LOWER(email) = LOWER($1) LIMIT 1;`,
-//     values: [email],
-//   });
+async function getUserByEmail(email) {
+  const result = await database.query({
+    text: `SELECT *
+           FROM users
+           WHERE LOWER(email) = LOWER($1) LIMIT 1;`,
+    values: [email],
+  });
 
-//   return result.rows[0];
-// }
+  return result.rows[0];
+}
 
 async function getUserByUsername(username) {
   const result = await database.query({
@@ -137,6 +143,7 @@ const user = {
   create,
   update,
   findOneByUsername,
+  findOneByEmail,
 };
 
 export default user;
