@@ -62,6 +62,12 @@ async function update(username, userInputValues) {
   }
 }
 
+async function findOneValidById(userId) {
+  const user = await getUserById(userId);
+  if (user == undefined) throw new NotFoundError();
+  return user;
+}
+
 async function findOneByUsername(username) {
   const user = await getUserByUsername(username);
   if (user == undefined) throw new NotFoundError();
@@ -93,6 +99,18 @@ async function validationUserName(input) {
 async function hashPasswordToInput(input) {
   const hashPass = await criptography.hash(input.password);
   input.password = hashPass;
+}
+
+async function getUserById(id) {
+  const result = await database.query({
+    text: `SELECT *
+           FROM users
+           WHERE id = $1
+           LIMIT 1;`,
+    values: [id],
+  });
+
+  return result.rows[0];
 }
 
 async function getUserByEmail(email) {
@@ -144,6 +162,7 @@ const user = {
   update,
   findOneByUsername,
   findOneByEmail,
+  findOneValidById,
 };
 
 export default user;
