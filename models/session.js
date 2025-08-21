@@ -5,7 +5,7 @@ import { UnauthorizedError } from "infra/errors/api-errors";
 const EXPIRATION_IN_MILISECONDS = 1000 * 60 * 60 * 24 * 30; // 30 dias
 
 async function findOneValidByToken(token) {
-  const sessionFound = await runSelectQuery(token);  
+  const sessionFound = await runSelectQuery(token);
   if (sessionFound == undefined) {
     throw new UnauthorizedError();
   }

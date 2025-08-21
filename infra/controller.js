@@ -36,7 +36,7 @@ function setSessionCookie(response, sessionToken) {
     httpOnly: true,
   });
 
-  response.setHeader("Set-Cookie",setCookie);
+  response.setHeader("Set-Cookie", setCookie);
 }
 
 const controller = {
@@ -44,7 +44,7 @@ const controller = {
     onNoMatch: onNoMatchHandler,
     onError: onErrorHandler,
   },
-  setSessionCookie
+  setSessionCookie,
 };
 
 export default controller;

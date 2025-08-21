@@ -3,7 +3,6 @@ import session from "models/session.js";
 import setCookieParser from "set-cookie-parser";
 const { default: orchestrator } = require("tests/orchestrator");
 
-
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
   await orchestrator.clearDatabase();
@@ -27,6 +26,11 @@ describe("GET /api/v1/users", () => {
       });
       expect(response.status).toBe(200);
 
+      const cacheControl = response.headers.get("Cache-Control");
+      expect(cacheControl).toBe(
+        "no-store, no-cache, max-age=0, must-revalidate",
+      );
+
       const responseBody = await response.json();
       expect(responseBody).toEqual({
         id: createdUser.id,
@@ -42,9 +46,15 @@ describe("GET /api/v1/users", () => {
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
 
       //Session renew assertions
-      const renewSessionObject = await session.findOneValidByToken(sessionObject.token);
-      expect(renewSessionObject.expires_at > sessionObject.expires_at).toBe(true);
-      expect(renewSessionObject.updated_at > sessionObject.updated_at).toBe(true);
+      const renewSessionObject = await session.findOneValidByToken(
+        sessionObject.token,
+      );
+      expect(renewSessionObject.expires_at > sessionObject.expires_at).toBe(
+        true,
+      );
+      expect(renewSessionObject.updated_at > sessionObject.updated_at).toBe(
+        true,
+      );
 
       //Set-cookie header assertions
       const parsedCookies = setCookieParser(response, {
@@ -61,8 +71,9 @@ describe("GET /api/v1/users", () => {
     });
 
     test("With nonexsitent session", async () => {
-      const nonexsitentToken = "025daf71ba34be31746d83d2b022dcf91e309114044ebd35420d97a6833e32aa71ffb7427b43644d3995b7734e554ffd";
-      
+      const nonexsitentToken =
+        "025daf71ba34be31746d83d2b022dcf91e309114044ebd35420d97a6833e32aa71ffb7427b43644d3995b7734e554ffd";
+
       const response = await fetch(url, {
         headers: {
           Cookie: `session_id=${nonexsitentToken}`,
@@ -140,9 +151,15 @@ describe("GET /api/v1/users", () => {
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
 
       //Session renew assertions
-      const renewSessionObject = await session.findOneValidByToken(sessionObject.token);
-      expect(renewSessionObject.expires_at > sessionObject.expires_at).toBe(true);
-      expect(renewSessionObject.updated_at > sessionObject.updated_at).toBe(true);
+      const renewSessionObject = await session.findOneValidByToken(
+        sessionObject.token,
+      );
+      expect(renewSessionObject.expires_at > sessionObject.expires_at).toBe(
+        true,
+      );
+      expect(renewSessionObject.updated_at > sessionObject.updated_at).toBe(
+        true,
+      );
 
       //Set-cookie header assertions
       const parsedCookies = setCookieParser(response, {
@@ -157,6 +174,5 @@ describe("GET /api/v1/users", () => {
         httpOnly: true,
       });
     });
-
   });
-})
+});
