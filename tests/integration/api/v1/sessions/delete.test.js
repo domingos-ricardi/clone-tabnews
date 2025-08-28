@@ -40,13 +40,12 @@ describe("DELETE /api/v1/sessions", () => {
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
       expect(Date.parse(responseBody.expires_at)).not.toBeNaN();
 
-
-      expect(responseBody.expires_at < sessionObject.expires_at.toISOString()).toBe(
-        true,
-      );
-      expect(responseBody.updated_at > sessionObject.updated_at.toISOString()).toBe(
-        true,
-      );
+      expect(
+        responseBody.expires_at < sessionObject.expires_at.toISOString(),
+      ).toBe(true);
+      expect(
+        responseBody.updated_at > sessionObject.updated_at.toISOString(),
+      ).toBe(true);
 
       //Set-cookie header assertions
       const parsedCookies = setCookieParser(response, {
@@ -61,11 +60,14 @@ describe("DELETE /api/v1/sessions", () => {
         httpOnly: true,
       });
 
-      const doubleCheckResponse = await fetch(process.env.BASE_API_V1 + "/users", {
-        headers: {
-          Cookie: `session_id=${sessionObject.token}`,
+      const doubleCheckResponse = await fetch(
+        process.env.BASE_API_V1 + "/users",
+        {
+          headers: {
+            Cookie: `session_id=${sessionObject.token}`,
+          },
         },
-      });
+      );
 
       expect(doubleCheckResponse.status).toBe(401);
 
