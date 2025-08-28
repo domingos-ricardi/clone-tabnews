@@ -88,6 +88,19 @@ describe("GET /api/v1/users", () => {
         action: "Verifique se os dados enviados estão corretos.",
         statusCode: 401,
       });
+
+      // Set-Cookie assertions
+      const parsedSetCookie = setCookieParser(response, {
+        map: true,
+      });
+
+      expect(parsedSetCookie.session_id).toEqual({
+        name: "session_id",
+        value: "invalid",
+        maxAge: -1,
+        path: "/",
+        httpOnly: true,
+      });
     });
 
     test("With exipired session", async () => {
@@ -114,6 +127,19 @@ describe("GET /api/v1/users", () => {
         message: "Dados de autenticação não conferem.",
         action: "Verifique se os dados enviados estão corretos.",
         statusCode: 401,
+      });
+
+      // Set-Cookie assertions
+      const parsedSetCookie = setCookieParser(response, {
+        map: true,
+      });
+
+      expect(parsedSetCookie.session_id).toEqual({
+        name: "session_id",
+        value: "invalid",
+        maxAge: -1,
+        path: "/",
+        httpOnly: true,
       });
     });
 
