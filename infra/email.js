@@ -1,21 +1,21 @@
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_SMTP_HOST,
-    port: process.env.EMAIL_SMTP_PORT,
-    auth: {
-        user: process.env.EMAIL_SMTP_USER,
-        pass: process.env.EMAIL_SMTP_PASS
-    },
-    secure: process.env.NODE_ENV === "production",
+  host: process.env.EMAIL_SMTP_HOST,
+  port: process.env.EMAIL_SMTP_PORT,
+  auth: {
+    user: process.env.EMAIL_SMTP_USER,
+    pass: process.env.EMAIL_SMTP_PASS,
+  },
+  secure: process.env.NODE_ENV === "production",
 });
 
 async function send(mailOptions) {
-    await transporter.sendMail(mailOptions);
+  await transporter.sendMail(mailOptions);
 }
 
 const email = {
-    send
-}
+  send,
+};
 
 export default email;
