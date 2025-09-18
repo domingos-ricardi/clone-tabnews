@@ -9,6 +9,7 @@ const urlMailHttp = `http://${process.env.EMAIL_HTTP_HOST}:${process.env.EMAIL_H
 
 async function waitForAllServices() {
   await waitForWebServer();
+  await waitForEmailServer();
 
   async function waitForWebServer() {
     return retry(fetchStatusPage, {
@@ -18,6 +19,20 @@ async function waitForAllServices() {
 
     async function fetchStatusPage() {
       const response = await fetch(process.env.BASE_API_V1 + "/status");
+
+      if (response.status !== 200)
+        throw new Error("HTTP Error: ${response.status }");
+    }
+  }
+
+  async function waitForEmailServer() {
+    return retry(fetchStatusPage, {
+      retries: 100,
+      maxTimeout: 1000,
+    });
+
+    async function fetchStatusPage() {
+      const response = await fetch(urlMailHttp);
 
       if (response.status !== 200)
         throw new Error("HTTP Error: ${response.status }");

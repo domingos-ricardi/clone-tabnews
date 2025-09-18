@@ -1,10 +1,14 @@
 import email from "infra/email.js";
 import orchestrator from "tests/orchestrator.js";
 
-describe("infra/email.js", () => {
-  orchestrator.deleteAllEmails();
+beforeAll(async () => {
+  await orchestrator.waitForAllServices();
+});
 
+describe("infra/email.js", () => {
   test("send()", async () => {
+    await orchestrator.deleteAllEmails();
+
     await email.send({
       from: "Doma <doma@test.com>",
       to: "user@mail.com",
