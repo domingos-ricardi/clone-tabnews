@@ -35,6 +35,7 @@ describe("POST to /api/v1/users", () => {
         username: "doma",
         email: "doma@ludo.com.br",
         password: responseBody.password,
+        features: [],
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });
