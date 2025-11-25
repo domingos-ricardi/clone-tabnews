@@ -1,6 +1,6 @@
 import { createRouter } from "next-connect";
 import controller from "infra/controller.js";
-import activation from "models/activation.js"
+import activation from "models/activation.js";
 
 const router = createRouter();
 router.patch(pacthHandler);

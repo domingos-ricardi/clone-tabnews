@@ -12,7 +12,7 @@ beforeAll(async () => {
 
 describe("Use case: Registration Flow (all successful)", () => {
   let createUserResponseBody;
-  let activationTokenObj
+  let activationTokenObj;
   test("Create user account", async () => {
     const createUserResponse = await fetch(process.env.BASE_API_V1 + "/users", {
       method: "POST",
@@ -50,7 +50,9 @@ describe("Use case: Registration Flow (all successful)", () => {
     expect(lastEmail.text).toContain("RegistrationFlow");
 
     const activationUUID = orchestrator.extractUUID(lastEmail.text);
-    expect(lastEmail.text).toContain(`${webserver.origin}/register/activate/${activationUUID}`);
+    expect(lastEmail.text).toContain(
+      `${webserver.origin}/register/activate/${activationUUID}`,
+    );
 
     activationTokenObj = await activation.findOneByValidId(activationUUID);
 
@@ -59,16 +61,21 @@ describe("Use case: Registration Flow (all successful)", () => {
   });
 
   test("Activate account", async () => {
-    const activateResponse = await fetch(process.env.BASE_API_V1 + `/activation/${activationTokenObj.id}`, {
-      method: "PATCH",
-    });
-  
+    const activateResponse = await fetch(
+      process.env.BASE_API_V1 + `/activation/${activationTokenObj.id}`,
+      {
+        method: "PATCH",
+      },
+    );
+
     expect(activateResponse.status).toBe(200);
-    
+
     const activateResponseBody = await activateResponse.json();
     expect(Date.parse(activateResponseBody.used_at)).not.toBeNull();
 
-    const activatedUser = await user.findOneValidById(createUserResponseBody.id);
+    const activatedUser = await user.findOneValidById(
+      createUserResponseBody.id,
+    );
     expect(activatedUser.features).toEqual(["create:session"]);
   });
 

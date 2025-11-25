@@ -1,5 +1,5 @@
-
-exports.up = (pgm) => {pgm.createTable("user_activation_tokens", {
+exports.up = (pgm) => {
+  pgm.createTable("user_activation_tokens", {
     id: {
       type: "uuid",
       primaryKey: true,

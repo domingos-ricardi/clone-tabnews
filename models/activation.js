@@ -1,10 +1,10 @@
-import email from 'infra/email.js'
-import database from 'infra/database.js'
-import webserver from 'infra/webserver.js'
-import { NotFoundError, UnauthorizedError } from 'infra/errors/api-errors.js';
-import user from 'models/user.js';
+import email from "infra/email.js";
+import database from "infra/database.js";
+import webserver from "infra/webserver.js";
+import { NotFoundError, UnauthorizedError } from "infra/errors/api-errors.js";
+import user from "models/user.js";
 
-const EXPIRATION_IN_MILISECONDS = 60 * 15 * 1000 // 15 minutes
+const EXPIRATION_IN_MILISECONDS = 60 * 15 * 1000; // 15 minutes
 
 async function create(userId) {
   const expiresAt = new Date(Date.now() + EXPIRATION_IN_MILISECONDS);
@@ -21,7 +21,7 @@ async function create(userId) {
         RETURNING
           *
         ;`,
-        values: [userId, expiresAt]
+      values: [userId, expiresAt],
     });
 
     return results.rows[0];
@@ -34,7 +34,7 @@ async function findOneByValidId(tokenId) {
 
   async function findByUUID(uuid) {
     const results = await database.query({
-        text: `
+      text: `
           SELECT
             *
           FROM
@@ -46,20 +46,19 @@ async function findOneByValidId(tokenId) {
           LIMIT
             1
           ;`,
-          values: [uuid]
+      values: [uuid],
+    });
+
+    if (results.rowCount === 0) {
+      throw new NotFoundError({
+        message: "Token de ativação não encontrado ou expirado.",
+        action: "Faça um novo cadastro.",
       });
+    }
 
-      if (results.rowCount === 0) {
-        throw new NotFoundError({
-          message: "Token de ativação não encontrado ou expirado.",
-          action: "Faça um novo cadastro.",
-        });
-      }
-
-      return results.rows[0];
+    return results.rows[0];
   }
 }
-
 
 async function sendEmailToUser(user, activationToken) {
   await email.send({
@@ -75,7 +74,7 @@ ${webserver.origin}/register/activate/${activationToken.id}
 
 Atenciosamente,
 Equipe DomaDEV.`,
-  })
+  });
 }
 
 async function markAsUsed(activationTokenId) {
@@ -95,7 +94,7 @@ async function markAsUsed(activationTokenId) {
         RETURNING
           *
         ;`,
-        values: [activationTokenId]
+      values: [activationTokenId],
     });
 
     if (results.rowCount === 0) {
@@ -113,7 +112,7 @@ async function activateUser(userId) {
   const userToActivate = await user.findOneValidById(userId);
   if (userToActivate.features.includes("read:activation_token")) {
     const activatedUser = await user.setFeatures(userId, ["create:session"]);
-    return activatedUser; 
+    return activatedUser;
   } else {
     throw new UnauthorizedError({
       message: "Usuário sem permissão para ativação.",
@@ -128,6 +127,6 @@ const activation = {
   sendEmailToUser,
   markAsUsed,
   activateUser,
-}
+};
 
 export default activation;
