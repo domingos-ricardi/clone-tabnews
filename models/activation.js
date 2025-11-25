@@ -1,6 +1,8 @@
 import email from 'infra/email.js'
 import database from 'infra/database.js'
 import webserver from 'infra/webserver.js'
+import { NotFoundError, UnauthorizedError } from 'infra/errors/api-errors.js';
+import user from 'models/user.js';
 
 const EXPIRATION_IN_MILISECONDS = 60 * 15 * 1000 // 15 minutes
 
@@ -26,23 +28,38 @@ async function create(userId) {
   }
 }
 
-async function findOneByUserId(userId) {
-  const results = await database.query({
-      text: `
-        SELECT
-          *
-        FROM
-          user_activation_tokens
-        WHERE
-          user_id = $1
-        LIMIT
-          1
-        ;`,
-        values: [userId]
-    });
+async function findOneByValidId(tokenId) {
+  const activationTokenObj = await findByUUID(tokenId);
+  return activationTokenObj;
 
-    return results.rows[0];
+  async function findByUUID(uuid) {
+    const results = await database.query({
+        text: `
+          SELECT
+            *
+          FROM
+            user_activation_tokens
+          WHERE
+            id = $1
+            AND expires_at > NOW()  
+            AND used_at IS NULL
+          LIMIT
+            1
+          ;`,
+          values: [uuid]
+      });
+
+      if (results.rowCount === 0) {
+        throw new NotFoundError({
+          message: "Token de ativação não encontrado ou expirado.",
+          action: "Faça um novo cadastro.",
+        });
+      }
+
+      return results.rows[0];
+  }
 }
+
 
 async function sendEmailToUser(user, activationToken) {
   await email.send({
@@ -61,10 +78,56 @@ Equipe DomaDEV.`,
   })
 }
 
+async function markAsUsed(activationTokenId) {
+  const usedToken = await runUpdateQuery(activationTokenId);
+  return usedToken;
+
+  async function runUpdateQuery(activationTokenId) {
+    const results = await database.query({
+      text: `
+        UPDATE
+          user_activation_tokens
+        SET
+          used_at = timezone('utc', now()),
+          updated_at = timezone('utc', now())
+        WHERE
+          id = $1
+        RETURNING
+          *
+        ;`,
+        values: [activationTokenId]
+    });
+
+    if (results.rowCount === 0) {
+      throw new NotFoundError({
+        message: "Token de ativação não encontrado.",
+        action: "Verifique o link ou faça um novo cadastro.",
+      });
+    }
+
+    return results.rows[0];
+  }
+}
+
+async function activateUser(userId) {
+  const userToActivate = await user.findOneValidById(userId);
+  if (userToActivate.features.includes("read:activation_token")) {
+    const activatedUser = await user.setFeatures(userId, ["create:session"]);
+    return activatedUser; 
+  } else {
+    throw new UnauthorizedError({
+      message: "Usuário sem permissão para ativação.",
+      action: "Verifique os dados ou entre em contato com o suporte.",
+    });
+  }
+}
+
 const activation = {
   create,
-  findOneByUserId,
-  sendEmailToUser
+  findOneByValidId,
+  sendEmailToUser,
+  markAsUsed,
+  activateUser,
 }
 
 export default activation;

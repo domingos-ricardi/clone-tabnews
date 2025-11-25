@@ -163,12 +163,35 @@ async function validateUniqueUserMail(email) {
   if (result.rowCount > 0) throw new ValidationError();
 }
 
+async function setFeatures(userId, features) {
+  const userWithNewFeatures = await runUpdateQuery(userId, features);
+  return userWithNewFeatures;
+
+  async function runUpdateQuery(userId, features) {
+    const result = await database.query({
+      text: `UPDATE 
+              users 
+             SET 
+              features = $2,
+              updated_at = timezone('utc', now()) 
+             WHERE 
+              id = $1 
+             RETURNING 
+              *
+             ;`,
+      values: [userId, features],
+    });
+    return result.rows[0];
+  }
+}
+
 const user = {
   create,
   update,
   findOneByUsername,
   findOneByEmail,
   findOneValidById,
+  setFeatures,
 };
 
 export default user;
