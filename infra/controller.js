@@ -17,9 +17,11 @@ function onNoMatchHandler(request, response) {
 }
 
 function onErrorHandler(error, request, response) {
-  if (error instanceof ValidationError || 
-      error instanceof NotFoundError || 
-      error instanceof NotFoundError) {
+  if (
+    error instanceof ValidationError ||
+    error instanceof NotFoundError ||
+    error instanceof NotFoundError
+  ) {
     return response.status(error.statusCode).json(error);
   }
 
@@ -61,8 +63,8 @@ async function injectAnonymousOrUser(request, response, next) {
   } else {
     injectAnonymousUser(request);
   }
-  
-  return next();  
+
+  return next();
 }
 
 async function injectAuthenticatedUser(request) {
@@ -70,19 +72,19 @@ async function injectAuthenticatedUser(request) {
   const sessionObject = await session.findOneValidByToken(sessionToken);
   const userObj = await user.findOneValidById(sessionObject.id);
 
-  request.context = { 
+  request.context = {
     ...request.context,
-    user: userObj
-   };
+    user: userObj,
+  };
 }
 
 function injectAnonymousUser(request) {
-  request.context = { 
+  request.context = {
     ...request.context,
     user: {
       features: ["read:activation_token", "create:session", "create:user"],
-    }
-   };
+    },
+  };
 }
 
 function canRequest(requiredFeature) {

@@ -80,22 +80,22 @@ describe("Use case: Registration Flow (all successful)", () => {
   });
 
   test("Login", async () => {
-      const response = await fetch(process.env.BASE_API_V1 + "sessions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: "registration.flow@curso.dev",
-          password: "RegistrationFlowPassword",
-        }),
-      });
-
-      expect(response.status).toBe(201);
-
-      const responseBody = await response.json();
-      expect(responseBody.user_id).toBe(createUserResponseBody.id);
+    const response = await fetch(process.env.BASE_API_V1 + "sessions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: "registration.flow@curso.dev",
+        password: "RegistrationFlowPassword",
+      }),
     });
+
+    expect(response.status).toBe(201);
+
+    const responseBody = await response.json();
+    expect(responseBody.user_id).toBe(createUserResponseBody.id);
+  });
 
   // test("Get user information", async () => {
 
