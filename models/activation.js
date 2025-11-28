@@ -111,8 +111,12 @@ async function markAsUsed(activationTokenId) {
 
 async function activateUser(userId) {
   const userToActivate = await user.findOneValidById(userId);
+  
   if (authorization.can(userToActivate, "read:activation_token")) {
-    const activatedUser = await user.setFeatures(userId, ["create:session"]);
+    const activatedUser = await user.setFeatures(userId, [
+      "create:session",
+      "read:session"
+    ]);
     return activatedUser;
   } else {
     throw new UnauthorizedError({

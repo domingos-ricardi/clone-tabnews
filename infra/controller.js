@@ -64,7 +64,6 @@ async function injectAnonymousOrUser(request, response, next) {
   } else {
     injectAnonymousUser(request);
   }
-  console.log("injectAuthenticatedUser: 04");
   return next();
 }
 
@@ -91,7 +90,6 @@ function injectAnonymousUser(request) {
 function canRequest(requiredFeature) {
   return function canRequestMiddleware(request, response, next) {
     const userRequest = request.context.user;
-
     if (!authorization.can(userRequest, requiredFeature)) {
       throw new ForbidenError({
         message: "Você não possui permissão para realizar esta ação.",
