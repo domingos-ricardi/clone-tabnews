@@ -98,6 +98,7 @@ describe("POST to /api/v1/sessions", () => {
         email: "tudo.correto@test.com",
         password: "senha-correta",
       });
+      await orchestrator.activateUser(userCreated.id);
 
       const response = await fetch(url, {
         method: "POST",

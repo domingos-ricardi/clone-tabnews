@@ -1,6 +1,7 @@
 import * as cookie from "cookie";
 import session from "models/session.js";
 import user from "models/user.js";
+import authorization from "models/authorization.js";
 
 import {
   MethodNotAllowedError,
@@ -63,14 +64,14 @@ async function injectAnonymousOrUser(request, response, next) {
   } else {
     injectAnonymousUser(request);
   }
-
+  console.log("injectAuthenticatedUser: 04");
   return next();
 }
 
 async function injectAuthenticatedUser(request) {
   const sessionToken = request.cookies.session_id;
   const sessionObject = await session.findOneValidByToken(sessionToken);
-  const userObj = await user.findOneValidById(sessionObject.id);
+  const userObj = await user.findOneValidById(sessionObject.user_id);
 
   request.context = {
     ...request.context,
@@ -89,11 +90,9 @@ function injectAnonymousUser(request) {
 
 function canRequest(requiredFeature) {
   return function canRequestMiddleware(request, response, next) {
-    console.log("Checking feature:", requiredFeature);
-    console.log("User features:", request.context.user.features);
-    const userFeatures = request.context.user.features;
+    const userRequest = request.context.user;
 
-    if (!userFeatures.includes(requiredFeature)) {
+    if (!authorization.can(userRequest, requiredFeature)) {
       throw new ForbidenError({
         message: "Você não possui permissão para realizar esta ação.",
         action: "Verifique se seu usuário possui a feature necessária.",

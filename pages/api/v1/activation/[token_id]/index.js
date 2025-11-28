@@ -14,8 +14,3 @@ async function pacthHandler(request, response) {
 
   return response.status(200).json(usedActivationToken);
 }
-
-// function extractUUID(text) {
-//   const match = text.match(/[0-9a-fA-F-]{36}/);
-//   return match ? match[0] : null;
-// }

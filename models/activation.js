@@ -3,6 +3,7 @@ import database from "infra/database.js";
 import webserver from "infra/webserver.js";
 import { NotFoundError, UnauthorizedError } from "infra/errors/api-errors.js";
 import user from "models/user.js";
+import authorization from "models/authorization.js";
 
 const EXPIRATION_IN_MILISECONDS = 60 * 15 * 1000; // 15 minutes
 
@@ -110,7 +111,7 @@ async function markAsUsed(activationTokenId) {
 
 async function activateUser(userId) {
   const userToActivate = await user.findOneValidById(userId);
-  if (userToActivate.features.includes("read:activation_token")) {
+  if (authorization.can(userToActivate, "read:activation_token")) {
     const activatedUser = await user.setFeatures(userId, ["create:session"]);
     return activatedUser;
   } else {
