@@ -159,7 +159,6 @@ describe("POST to /api/v1/users", () => {
         action: "Verifique se seu usuário possui a feature necessária.",
         statusCode: 403,
       });
-
     });
   });
 });

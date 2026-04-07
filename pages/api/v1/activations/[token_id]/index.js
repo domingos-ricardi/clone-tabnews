@@ -11,7 +11,8 @@ export default router.handler(controller.errorHandlers);
 async function patchHandler(request, response) {
   const activationTokenId = request.query.token_id;
 
-  const validActivationToken = await activation.findOneByValidId(activationTokenId);
+  const validActivationToken =
+    await activation.findOneByValidId(activationTokenId);
   await activation.activateUser(validActivationToken.user_id);
   const usedActivationToken = await activation.markAsUsed(activationTokenId);
   return response.status(200).json(usedActivationToken);

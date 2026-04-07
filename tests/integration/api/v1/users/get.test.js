@@ -19,7 +19,7 @@ describe("GET /api/v1/users", () => {
         features: ["read:activation_token"],
       });
       const activatedUser = await orchestrator.activateUser(createdUser.id);
-      
+
       const sessionObject = await orchestrator.createSession(createdUser.id);
       const response = await fetch(url, {
         headers: {
@@ -39,10 +39,7 @@ describe("GET /api/v1/users", () => {
         username: "UserWithValidSession",
         email: createdUser.email,
         password: createdUser.password,
-        features: [
-          "create:session",
-          "read:session"
-        ],
+        features: ["create:session", "read:session"],
         created_at: createdUser.created_at.toISOString(),
         updated_at: activatedUser.updated_at.toISOString(),
       });
@@ -177,10 +174,7 @@ describe("GET /api/v1/users", () => {
         username: "UserWithAlmostExpiredSession",
         email: createdUser.email,
         password: createdUser.password,
-        features: [
-          "create:session",
-          "read:session"
-        ],
+        features: ["create:session", "read:session"],
         created_at: createdUser.created_at.toISOString(),
         updated_at: activatedUser.updated_at.toISOString(),
       });

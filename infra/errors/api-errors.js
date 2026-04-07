@@ -57,7 +57,9 @@ export class NotMatchError extends BaseError {
 
 export class ForbiddenError extends BaseError {
   constructor(values) {
-    super(values?.message || "Você não tem permissão para acessar este recurso.");
+    super(
+      values?.message || "Você não tem permissão para acessar este recurso.",
+    );
     this.name = "ForbiddenError";
     this.action =
       values?.action || "Verifique as features necessárias antes de continuar.";

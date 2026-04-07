@@ -53,7 +53,7 @@ async function findOneByValidId(tokenId) {
     if (results.rowCount === 0) {
       throw new NotFoundError(
         "Token de ativação não encontrado ou expirado.",
-        "Faça um novo cadastro."
+        "Faça um novo cadastro.",
       );
     }
 
@@ -101,7 +101,7 @@ async function markAsUsed(activationTokenId) {
     if (results.rowCount === 0) {
       throw new NotFoundError(
         "Token de ativação não encontrado.",
-        "Verifique o link ou faça um novo cadastro."
+        "Verifique o link ou faça um novo cadastro.",
       );
     }
 
@@ -111,11 +111,11 @@ async function markAsUsed(activationTokenId) {
 
 async function activateUser(userId) {
   const userToActivate = await user.findOneValidById(userId);
-  
+
   if (authorization.can(userToActivate, "read:activation_token")) {
     const activatedUser = await user.setFeatures(userId, [
       "create:session",
-      "read:session"
+      "read:session",
     ]);
     return activatedUser;
   } else {

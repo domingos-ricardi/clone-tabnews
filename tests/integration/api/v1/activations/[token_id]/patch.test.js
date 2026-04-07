@@ -9,20 +9,22 @@ beforeAll(async () => {
   await orchestrator.runPendingMigrations();
 });
 
-
 describe("PATCH /api/v1/activations/[token_id]", () => {
   const url = process.env.BASE_API_V1 + "/activations";
 
   describe("Anonymous user", () => {
     test("With non-existent token", async () => {
-      const response = await fetch(url + "/254e4a46-5ee4-4fd7-881a-803df9839d52", {
-        method: "PATCH"
-      });
+      const response = await fetch(
+        url + "/254e4a46-5ee4-4fd7-881a-803df9839d52",
+        {
+          method: "PATCH",
+        },
+      );
 
       expect(response.status).toBe(404);
 
       const responseBody = await response.json();
-      
+
       expect(responseBody).toEqual({
         name: "NotFoundError",
         message: "Token de ativação não encontrado ou expirado.",
@@ -40,13 +42,13 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
       const expiredActivationToken = await activation.create(createdUser.id);
 
       jest.useRealTimers();
-      
+
       const response = await fetch(url + `/${expiredActivationToken.id}`, {
-        method: "PATCH"
+        method: "PATCH",
       });
 
       expect(response.status).toBe(404);
-      
+
       const responseBody = await response.json();
 
       expect(responseBody).toEqual({
@@ -55,7 +57,6 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
         action: "Faça um novo cadastro.",
         statusCode: 404,
       });
-
     });
 
     test("With already used token", async () => {
@@ -63,17 +64,17 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
       const activationToken = await activation.create(createdUser.id);
 
       const response = await fetch(url + `/${activationToken.id}`, {
-        method: "PATCH"
+        method: "PATCH",
       });
       expect(response.status).toBe(200);
 
       const secondResponse = await fetch(url + `/${activationToken.id}`, {
-        method: "PATCH"
+        method: "PATCH",
       });
       expect(secondResponse.status).toBe(404);
 
       const responseBody = await secondResponse.json();
-      
+
       expect(responseBody).toEqual({
         name: "NotFoundError",
         message: "Token de ativação não encontrado ou expirado.",
@@ -87,7 +88,7 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
       const activationToken = await activation.create(createdUser.id);
 
       const response = await fetch(url + `/${activationToken.id}`, {
-        method: "PATCH"
+        method: "PATCH",
       });
       expect(response.status).toBe(200);
 
@@ -115,13 +116,13 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
 
       expiresAt.setMilliseconds(0);
       createdAt.setMilliseconds(0);
-      
+
       expect(expiresAt - createdAt).toBe(activation.EXPIRATION_IN_MILISECONDS);
 
       const activatedUser = await user.findOneValidById(responseBody.user_id);
       expect(activatedUser.features).toEqual([
-        "create:session", 
-        "read:session"
+        "create:session",
+        "read:session",
       ]);
     });
 
@@ -131,11 +132,11 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
       const activationToken = await activation.create(createdUser.id);
 
       const response = await fetch(url + `/${activationToken.id}`, {
-        method: "PATCH"
+        method: "PATCH",
       });
       expect(response.status).toBe(403);
       const responseBody = await response.json();
-      
+
       expect(responseBody).toEqual({
         name: "ForbiddenError",
         message: "Você não pode utilizar este token de ativação.",
@@ -158,12 +159,12 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
       const response = await fetch(url + `/${user2ActivationToken.id}`, {
         method: "PATCH",
         headers: {
-          Cookie: `session_id=${user1SessionObject.token}`
-        }
+          Cookie: `session_id=${user1SessionObject.token}`,
+        },
       });
       expect(response.status).toBe(403);
       const responseBody = await response.json();
-      
+
       expect(responseBody).toEqual({
         name: "ForbiddenError",
         message: "Você não possui permissão para realizar esta ação.",
