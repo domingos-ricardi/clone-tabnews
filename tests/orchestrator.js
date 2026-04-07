@@ -72,6 +72,10 @@ async function deleteAllEmails() {
   });
 }
 
+async function addFeaturesToUser(userId, features) {
+  return await user.addFeatures(userId, features);
+}
+
 async function getLastEmail() {
   const response = await fetch(`${urlMailHttp}/messages`);
   const body = await response.json();
@@ -104,6 +108,7 @@ const orchestrator = {
   getLastEmail,
   extractUUID,
   activateUser,
+  addFeaturesToUser,
 };
 
 export default orchestrator;
