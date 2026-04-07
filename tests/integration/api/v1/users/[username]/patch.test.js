@@ -251,5 +251,36 @@ describe("PATCH to /api/v1/users/[username]", () => {
       );
       expect(passwordNotMatch).toBe(false);
     });
+
+    test("With 'user2' targeting 'user1'", async () => {
+      const user1 = await orchestrator.createUser({});
+      const user2 = await orchestrator.createUser({});
+      
+      await orchestrator.activateUser(user1.id);
+      await orchestrator.activateUser(user2.id);
+      const sessionObject = await orchestrator.createSession(user2.id);
+
+      const response = await fetch(url + `/${user1.username}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `session_id=${sessionObject.token}`,
+        },
+        body: JSON.stringify({
+          username: "User1NewUsername",
+        }),
+      });
+
+      expect(response.status).toBe(403);
+
+      const responseBody = await response.json();
+
+      expect(responseBody).toEqual({
+        action: "Verifique se seu usuário possui a feature necessária.",
+        message: "Você não possui permissão para realizar esta ação.",
+        name: "ForbiddenError",
+        statusCode: 403,
+      });
+    });
   });
 });
