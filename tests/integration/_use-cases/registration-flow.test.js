@@ -63,7 +63,7 @@ describe("Use case: Registration Flow (all successful)", () => {
 
   test("Activate account", async () => {
     const activateResponse = await fetch(
-      process.env.BASE_API_V1 + `/activation/${activationTokenObj.id}`,
+      process.env.BASE_API_V1 + `/activations/${activationTokenObj.id}`,
       {
         method: "PATCH",
       },

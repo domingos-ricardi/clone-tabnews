@@ -9,7 +9,7 @@ import {
   ValidationError,
   NotFoundError,
   UnauthorizedError,
-  ForbidenError,
+  ForbiddenError,
 } from "./errors/api-errors.js";
 
 function onNoMatchHandler(request, response) {
@@ -21,7 +21,7 @@ function onErrorHandler(error, request, response) {
   if (
     error instanceof ValidationError ||
     error instanceof NotFoundError ||
-    error instanceof NotFoundError
+    error instanceof ForbiddenError
   ) {
     return response.status(error.statusCode).json(error);
   }
@@ -91,7 +91,7 @@ function canRequest(requiredFeature) {
   return function canRequestMiddleware(request, response, next) {
     const userRequest = request.context.user;
     if (!authorization.can(userRequest, requiredFeature)) {
-      throw new ForbidenError({
+      throw new ForbiddenError({
         message: "Você não possui permissão para realizar esta ação.",
         action: "Verifique se seu usuário possui a feature necessária.",
       });

@@ -1,7 +1,7 @@
 import email from "infra/email.js";
 import database from "infra/database.js";
 import webserver from "infra/webserver.js";
-import { NotFoundError, UnauthorizedError } from "infra/errors/api-errors.js";
+import { ForbiddenError, NotFoundError } from "infra/errors/api-errors.js";
 import user from "models/user.js";
 import authorization from "models/authorization.js";
 
@@ -51,10 +51,10 @@ async function findOneByValidId(tokenId) {
     });
 
     if (results.rowCount === 0) {
-      throw new NotFoundError({
-        message: "Token de ativação não encontrado ou expirado.",
-        action: "Faça um novo cadastro.",
-      });
+      throw new NotFoundError(
+        "Token de ativação não encontrado ou expirado.",
+        "Faça um novo cadastro."
+      );
     }
 
     return results.rows[0];
@@ -99,10 +99,10 @@ async function markAsUsed(activationTokenId) {
     });
 
     if (results.rowCount === 0) {
-      throw new NotFoundError({
-        message: "Token de ativação não encontrado.",
-        action: "Verifique o link ou faça um novo cadastro.",
-      });
+      throw new NotFoundError(
+        "Token de ativação não encontrado.",
+        "Verifique o link ou faça um novo cadastro."
+      );
     }
 
     return results.rows[0];
@@ -119,9 +119,9 @@ async function activateUser(userId) {
     ]);
     return activatedUser;
   } else {
-    throw new UnauthorizedError({
-      message: "Usuário sem permissão para ativação.",
-      action: "Verifique os dados ou entre em contato com o suporte.",
+    throw new ForbiddenError({
+      message: "Você não pode utilizar este token de ativação.",
+      action: "Entre em contato com o suporte.",
     });
   }
 }
@@ -132,6 +132,7 @@ const activation = {
   sendEmailToUser,
   markAsUsed,
   activateUser,
+  EXPIRATION_IN_MILISECONDS,
 };
 
 export default activation;

@@ -29,10 +29,10 @@ export class ValidationError extends BaseError {
 }
 
 export class NotFoundError extends BaseError {
-  constructor() {
-    super("Não foi possível encontrar o usuário.");
+  constructor(message, action) {
+    super(message ?? "Não foi possível encontrar o usuário.");
     this.name = "NotFoundError";
-    this.action = "Verifique os dados informados e tente novamente.";
+    this.action = action ?? "Verifique os dados informados e tente novamente.";
     this.statusCode = 404;
   }
 }
@@ -55,12 +55,12 @@ export class NotMatchError extends BaseError {
   }
 }
 
-export class ForbidenError extends BaseError {
-  constructor(action) {
-    super();
-    this.name = "ForbidenError";
+export class ForbiddenError extends BaseError {
+  constructor(values) {
+    super(values?.message || "Você não tem permissão para acessar este recurso.");
+    this.name = "ForbiddenError";
     this.action =
-      action || "Verifique as features necessárias antes de continuar.";
+      values?.action || "Verifique as features necessárias antes de continuar.";
     this.statusCode = 403;
   }
 }
