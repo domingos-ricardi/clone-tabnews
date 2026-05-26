@@ -33,8 +33,6 @@ describe("POST to /api/v1/users", () => {
       expect(responseBody).toEqual({
         id: responseBody.id,
         username: "doma",
-        email: "doma@ludo.com.br",
-        password: responseBody.password,
         features: ["read:activation_token"],
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,

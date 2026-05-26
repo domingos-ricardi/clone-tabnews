@@ -3,8 +3,9 @@ import controller from "infra/controller.js";
 import migrator from "models/migrator.js";
 
 const router = createRouter();
-router.get(getHandler);
-router.post(postHandler);
+router.use(controller.injectAnonymousOrUser);
+router.post(controller.canRequest("create:migrations"), postHandler);
+router.get(controller.canRequest("read:migrations"), getHandler);
 
 export default router.handler(controller.errorHandlers);
 

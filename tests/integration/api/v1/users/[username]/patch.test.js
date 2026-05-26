@@ -150,8 +150,6 @@ describe("PATCH to /api/v1/users/[username]", () => {
       expect(responseBody).toEqual({
         id: responseBody.id,
         username: "uniqueUser2",
-        email: userCreated.email,
-        password: responseBody.password,
         features: ["create:session", "read:session", "update:user"],
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
@@ -187,8 +185,6 @@ describe("PATCH to /api/v1/users/[username]", () => {
       expect(responseBody).toEqual({
         id: responseBody.id,
         username: user.username,
-        email: "uniqueEmail2@test.com.br",
-        password: responseBody.password,
         features: ["create:session", "read:session", "update:user"],
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
@@ -226,8 +222,6 @@ describe("PATCH to /api/v1/users/[username]", () => {
       expect(responseBody).toEqual({
         id: responseBody.id,
         username: userCreated.username,
-        email: userCreated.email,
-        password: responseBody.password,
         features: ["create:session", "read:session", "update:user"],
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
@@ -313,8 +307,6 @@ describe("PATCH to /api/v1/users/[username]", () => {
       expect(responseBody).toEqual({
         id: defaultUserActivated.id,
         username: "User1NewUsername",
-        email: defaultUserActivated.email,
-        password: defaultUserActivated.password,
         features: defaultUserActivated.features,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
