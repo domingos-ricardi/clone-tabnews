@@ -50,7 +50,6 @@ describe("PATCH to /api/v1/users/[username]", () => {
         headers: {
           Cookie: `session_id=${sessionObject.token}`,
         },
-
       });
       expect(response.status).toBe(404);
 
@@ -67,7 +66,7 @@ describe("PATCH to /api/v1/users/[username]", () => {
     test("Duplicated 'username'", async () => {
       const user1 = await orchestrator.createUser({});
       const user2 = await orchestrator.createUser({});
-      
+
       await orchestrator.activateUser(user1.id);
       await orchestrator.activateUser(user2.id);
       const sessionObject = await orchestrator.createSession(user2.id);
@@ -136,7 +135,6 @@ describe("PATCH to /api/v1/users/[username]", () => {
         headers: {
           "Content-Type": "application/json",
           Cookie: `session_id=${sessionObject.token}`,
-
         },
         body: JSON.stringify({
           username: "uniqueUser2",
@@ -165,7 +163,6 @@ describe("PATCH to /api/v1/users/[username]", () => {
       const user = await orchestrator.createUser({});
       await orchestrator.activateUser(user.id);
       const sessionObject = await orchestrator.createSession(user.id);
-
 
       const response = await fetch(url + `/${user.username}`, {
         method: "PATCH",
@@ -208,7 +205,6 @@ describe("PATCH to /api/v1/users/[username]", () => {
         headers: {
           "Content-Type": "application/json",
           Cookie: `session_id=${sessionObject.token}`,
-
         },
         body: JSON.stringify({
           password: "newPass@123",
@@ -249,7 +245,7 @@ describe("PATCH to /api/v1/users/[username]", () => {
     test("With 'user2' targeting 'user1'", async () => {
       const user1 = await orchestrator.createUser({});
       const user2 = await orchestrator.createUser({});
-      
+
       await orchestrator.activateUser(user1.id);
       await orchestrator.activateUser(user2.id);
       const sessionObject = await orchestrator.createSession(user2.id);
@@ -282,11 +278,15 @@ describe("PATCH to /api/v1/users/[username]", () => {
     test("With 'update:user:others' targeting 'defaultUser'", async () => {
       const defaultUser = await orchestrator.createUser({});
       const privilegedUser = await orchestrator.createUser({});
-      
-      const defaultUserActivated = await orchestrator.activateUser(defaultUser.id);
+
+      const defaultUserActivated = await orchestrator.activateUser(
+        defaultUser.id,
+      );
       await orchestrator.activateUser(privilegedUser.id);
 
-      await orchestrator.addFeaturesToUser(privilegedUser.id, ["update:user:others"]);
+      await orchestrator.addFeaturesToUser(privilegedUser.id, [
+        "update:user:others",
+      ]);
       const sessionObject = await orchestrator.createSession(privilegedUser.id);
 
       const response = await fetch(url + `/${defaultUser.username}`, {

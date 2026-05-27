@@ -29,10 +29,14 @@ async function postHandler(request, response) {
   const newSession = await session.create(authUser.id);
   controller.setSessionCookie(response, newSession.token);
 
-  const secureOutputValues = authorization.filterOutput(authUser, "read:session", newSession);
+  const secureOutputValues = authorization.filterOutput(
+    authUser,
+    "read:session",
+    newSession,
+  );
 
   console.log("Sessão criada com sucesso:", secureOutputValues);
-  
+
   return response.status(201).json(secureOutputValues);
 }
 
@@ -44,7 +48,11 @@ async function deleteHandler(request, response) {
 
   controller.clearSessionCookie(response);
 
-  const secureOutputValues = authorization.filterOutput(userTryingToDelete, "read:session", expireSession);
+  const secureOutputValues = authorization.filterOutput(
+    userTryingToDelete,
+    "read:session",
+    expireSession,
+  );
 
   return response.status(200).json(secureOutputValues);
 }

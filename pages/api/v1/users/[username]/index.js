@@ -16,7 +16,11 @@ async function getHandler(request, response) {
   const username = request.query.username;
   const founded = await user.findOneByUsername(username);
 
-  const securityOutValues = authorization.filterOutput(userRequesting, "read:user", founded);
+  const securityOutValues = authorization.filterOutput(
+    userRequesting,
+    "read:user",
+    founded,
+  );
   return response.status(200).json(securityOutValues);
 }
 
@@ -31,12 +35,16 @@ async function patchHandler(request, response) {
     throw new ForbiddenError({
       message: "Você não possui permissão para realizar esta ação.",
       action: "Verifique se seu usuário possui a feature necessária.",
-    })
+    });
   }
 
   const updated = await user.update(username, userInputValues);
 
-  const secureOutputValues = authorization.filterOutput(userRequesting, "read:user", updated);
+  const secureOutputValues = authorization.filterOutput(
+    userRequesting,
+    "read:user",
+    updated,
+  );
 
   return response.status(200).json(secureOutputValues);
 }

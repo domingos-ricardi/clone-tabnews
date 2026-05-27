@@ -6,7 +6,7 @@ function can(user, feature, resource) {
   }
 
   if (feature === "update:user" && resource) {
-    authorized = false
+    authorized = false;
 
     if (user.id === resource.id || can(user, "update:user:others")) {
       authorized = true;
@@ -62,6 +62,35 @@ function filterOutput(user, feature, resource) {
       expires_at: resource.expires_at,
       used_at: resource.used_at,
     };
+  }
+
+  if (feature === "read:migrations") {
+    return resource.map((migration) => {
+      return {
+        path: migration.path,
+        name: migration.name,
+        timestamp: migration.timestamp,
+      };
+    });
+  }
+
+  if (feature === "read:status") {
+    const output = {
+      update_at: resource.update_at,
+      dependencies: {
+        database: {
+          max_connections: resource.dependencies.database.max_connections,
+          opened_connections: resource.dependencies.database.opened_connections,
+        },
+      },
+    };
+
+    if (can(user, "read:status:all")) {
+      output.dependencies.database.version =
+        resource.dependencies.database.version;
+    }
+
+    return output;
   }
 }
 

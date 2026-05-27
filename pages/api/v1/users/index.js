@@ -20,7 +20,11 @@ async function postHandler(request, response) {
   const activationToken = await activation.create(newUser.id);
   await activation.sendEmailToUser(newUser, activationToken);
 
-  const secureOutputValues = authorization.filterOutput(userTryingToPost, "read:user", newUser);
+  const secureOutputValues = authorization.filterOutput(
+    userTryingToPost,
+    "read:user",
+    newUser,
+  );
 
   return response.status(201).json(secureOutputValues);
 }
@@ -38,7 +42,11 @@ async function getHandler(request, response) {
     "no-store, no-cache, max-age=0, must-revalidate",
   );
 
-  const secureOutputValues = authorization.filterOutput(userTryingToGet, "read:user:self", userObject);
+  const secureOutputValues = authorization.filterOutput(
+    userTryingToGet,
+    "read:user:self",
+    userObject,
+  );
 
   return response.status(200).json(secureOutputValues);
 }

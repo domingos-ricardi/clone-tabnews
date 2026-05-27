@@ -13,11 +13,16 @@ async function patchHandler(request, response) {
   const activationTokenId = request.query.token_id;
   const userTryingToActivate = request.context.user;
 
-  const validActivationToken = await activation.findOneByValidId(activationTokenId);
+  const validActivationToken =
+    await activation.findOneByValidId(activationTokenId);
   await activation.activateUser(validActivationToken.user_id);
   const usedActivationToken = await activation.markAsUsed(activationTokenId);
 
-  const secureOutputValues = authorization.filterOutput(userTryingToActivate, "read:activation_token", usedActivationToken);
+  const secureOutputValues = authorization.filterOutput(
+    userTryingToActivate,
+    "read:activation_token",
+    usedActivationToken,
+  );
 
   return response.status(200).json(secureOutputValues);
 }
