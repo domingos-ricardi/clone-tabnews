@@ -20,6 +20,6 @@ const availableFeatures = [
   //STATUS
   "read:status",
   "read:status:all",
-]
+];
 
 export default availableFeatures;

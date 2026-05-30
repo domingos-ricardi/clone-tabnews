@@ -49,7 +49,7 @@ function validateResource(resource) {
 function filterOutput(user, feature, resource) {
   validateUser(user);
   validateFeature(feature);
-  validateResource(resource); 
+  validateResource(resource);
 
   if (feature === "read:user") {
     return {

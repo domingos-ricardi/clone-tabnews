@@ -5,7 +5,7 @@ describe("models/authorization", () => {
   describe(".can()", () => {
     test("Without `user`", () => {
       expect(() => {
-        authorization.can()
+        authorization.can();
       }).toThrow(InternalServerError);
     });
 
@@ -15,7 +15,7 @@ describe("models/authorization", () => {
       };
 
       expect(() => {
-        authorization.can(crestedUser)
+        authorization.can(crestedUser);
       }).toThrow(InternalServerError);
     });
 
@@ -25,7 +25,7 @@ describe("models/authorization", () => {
       };
 
       expect(() => {
-        authorization.can(crestedUser, "unknown:feature")
+        authorization.can(crestedUser, "unknown:feature");
       }).toThrow(InternalServerError);
     });
 
@@ -41,7 +41,7 @@ describe("models/authorization", () => {
   describe(".filterOutput()", () => {
     test("Without `user`", () => {
       expect(() => {
-        authorization.can()
+        authorization.can();
       }).toThrow(InternalServerError);
     });
 
@@ -51,7 +51,7 @@ describe("models/authorization", () => {
       };
 
       expect(() => {
-        authorization.can(crestedUser)
+        authorization.can(crestedUser);
       }).toThrow(InternalServerError);
     });
 
@@ -61,7 +61,7 @@ describe("models/authorization", () => {
       };
 
       expect(() => {
-        authorization.can(crestedUser, "unknown:feature")
+        authorization.can(crestedUser, "unknown:feature");
       }).toThrow(InternalServerError);
     });
 
@@ -71,7 +71,7 @@ describe("models/authorization", () => {
       };
 
       expect(() => {
-        authorization.filterOutput(crestedUser, "read:user")
+        authorization.filterOutput(crestedUser, "read:user");
       }).toThrow(InternalServerError);
     });
 
@@ -90,7 +90,11 @@ describe("models/authorization", () => {
         password: "hashed_password",
       };
 
-      const result = authorization.filterOutput(crestedUser, "read:user", resource);
+      const result = authorization.filterOutput(
+        crestedUser,
+        "read:user",
+        resource,
+      );
 
       expect(result).toEqual({
         id: resource.id,
