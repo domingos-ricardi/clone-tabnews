@@ -56,6 +56,6 @@ describe("GET to /api/v1/status", () => {
 // eslint-disable-next-line jest/no-commented-out-tests
 // test.only("SQL Injectio test", async () => {
 //   await fetch(
-//     process.env.BASE_API_V1 +  "/status?dbname='; SELECT pg_sleep(4);; --",
+//     process.env.BASE_API_V1 +  "/status?dbname=`; SELECT pg_sleep(4);; --",
 //   );
 // });
