@@ -1,4 +1,10 @@
+import { InternalServerError } from "infra/errors/api-errors.js";
+import availableFeatures from "models/features.js";
+
 function can(user, feature, resource) {
+  validateUser(user);
+  validateFeature(feature);
+
   let authorized = false;
 
   if (user.features.includes(feature)) {
@@ -16,7 +22,35 @@ function can(user, feature, resource) {
   return authorized;
 }
 
+function validateUser(user) {
+  if (!user || !user.features) {
+    throw new InternalServerError({
+      cause: "É necessário fornecer um `user` no model `authorization`.",
+    });
+  }
+}
+
+function validateFeature(feature) {
+  if (!feature || !availableFeatures.includes(feature)) {
+    throw new InternalServerError({
+      cause: "É necessário fornecer um `feature` no model `authorization`.",
+    });
+  }
+}
+
+function validateResource(resource) {
+  if (!resource) {
+    throw new InternalServerError({
+      cause: "É necessário fornecer um `resource` no model `authorization`.",
+    });
+  }
+}
+
 function filterOutput(user, feature, resource) {
+  validateUser(user);
+  validateFeature(feature);
+  validateResource(resource); 
+
   if (feature === "read:user") {
     return {
       id: resource.id,
