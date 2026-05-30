@@ -9,6 +9,7 @@ export class BaseError extends Error {
       message: this.message,
       action: this.action,
       statusCode: this.statusCode,
+      context: this.context,
     };
   }
 }
