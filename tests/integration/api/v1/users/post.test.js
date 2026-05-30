@@ -1,5 +1,7 @@
 import { version as uuidVersion } from "uuid";
 import orchestrator from "tests/orchestrator";
+import user from "models/user.js";
+import criptography from "models/criptography.js";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -8,7 +10,7 @@ beforeAll(async () => {
 });
 
 describe("POST to /api/v1/users", () => {
-  const url = "http://localhost:3000/api/v1/users";
+  const url = process.env.BASE_API_V1 + "/users";
   const method = "POST";
 
   describe("Anonymous user", () => {
@@ -31,8 +33,7 @@ describe("POST to /api/v1/users", () => {
       expect(responseBody).toEqual({
         id: responseBody.id,
         username: "doma",
-        email: "doma@ludo.com.br",
-        password: "senha@123",
+        features: ["read:activation_token"],
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });
@@ -40,6 +41,19 @@ describe("POST to /api/v1/users", () => {
       expect(uuidVersion(responseBody.id)).toBe(4);
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
+
+      const userInDB = await user.findOneByUsername("doma");
+      const passwordMatch = await criptography.compare(
+        "senha@123",
+        userInDB.password,
+      );
+      expect(passwordMatch).toBe(true);
+
+      const passwordNotMatch = await criptography.compare(
+        "senhaErrada",
+        userInDB.password,
+      );
+      expect(passwordNotMatch).toBe(false);
     });
 
     test("Duplicated email", async () => {
@@ -111,6 +125,37 @@ describe("POST to /api/v1/users", () => {
         message: "Não foi possível registrar dados do usuário.",
         action: "Verifique os dados informados e tente novamente.",
         statusCode: 400,
+      });
+    });
+  });
+
+  describe("Default user", () => {
+    test("With unique and valid data", async () => {
+      const user1 = await orchestrator.createUser({});
+      await orchestrator.activateUser(user1.id);
+      const user1SessionObject = await orchestrator.createSession(user1.id);
+
+      const user2Response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `session_id=${user1SessionObject.token}`,
+        },
+        body: JSON.stringify({
+          username: "doma2",
+          email: "doma2@ludo.com.br",
+          password: "senha@123",
+        }),
+      });
+      expect(user2Response.status).toBe(403);
+
+      const user2ResponseBody = await user2Response.json();
+
+      expect(user2ResponseBody).toEqual({
+        name: "ForbiddenError",
+        message: "Você não possui permissão para realizar esta ação.",
+        action: "Verifique se seu usuário possui a feature necessária.",
+        statusCode: 403,
       });
     });
   });

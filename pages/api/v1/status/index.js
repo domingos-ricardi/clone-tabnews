@@ -1,13 +1,16 @@
 import { createRouter } from "next-connect";
 import database from "infra/database.js";
 import controller from "infra/controller.js";
+import authorization from "models/authorization";
 
 const router = createRouter();
+router.use(controller.injectAnonymousOrUser);
 router.get(getHandler);
 
 export default router.handler(controller.errorHandlers);
 
 async function getHandler(request, response) {
+  const userTryToGet = request.context.user;
   const updateAt = new Date().toISOString();
 
   const dbVersionResult = await database.query("SHOW server_version;");
@@ -21,8 +24,7 @@ async function getHandler(request, response) {
     values: [process.env.POSTGRES_DB],
   });
   const dbOpenedConnectionsValue = dbOpenedConnectionsResult.rows[0].count;
-
-  response.status(200).json({
+  const statusObject = {
     update_at: updateAt,
     dependencies: {
       database: {
@@ -31,5 +33,13 @@ async function getHandler(request, response) {
         opened_connections: dbOpenedConnectionsValue,
       },
     },
-  });
+  };
+
+  const secureOutputValues = authorization.filterOutput(
+    userTryToGet,
+    "read:status",
+    statusObject,
+  );
+
+  response.status(200).json(secureOutputValues);
 }
