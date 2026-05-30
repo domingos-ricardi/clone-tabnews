@@ -1,11 +1,12 @@
 import orchestrator from "tests/orchestrator";
+import webserver from "infra/webserver";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
 });
 
 describe("GET to /api/v1/status", () => {
-  const url = process.env.BASE_API_V1 + "/status";
+  const url = `${webserver.origin}/api/v1/status`;
 
   describe("Anonymous user", () => {
     test("Retrieving current system status", async () => {

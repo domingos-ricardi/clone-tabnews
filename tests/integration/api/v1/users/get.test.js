@@ -1,6 +1,7 @@
 import { version as uuidVersion } from "uuid";
 import session from "models/session.js";
 import setCookieParser from "set-cookie-parser";
+import webserver from "infra/webserver";
 const { default: orchestrator } = require("tests/orchestrator");
 
 beforeAll(async () => {
@@ -10,7 +11,7 @@ beforeAll(async () => {
 });
 
 describe("GET /api/v1/users", () => {
-  const url = process.env.BASE_API_V1 + "/users";
+  const url = `${webserver.origin}/api/v1/users`;
 
   describe("Default user", () => {
     test("With valid session", async () => {

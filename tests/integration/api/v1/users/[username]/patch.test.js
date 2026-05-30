@@ -2,6 +2,7 @@ import { version as uuidVersion } from "uuid";
 import orchestrator from "tests/orchestrator";
 import user from "models/user.js";
 import criptography from "models/criptography.js";
+import webserver from "infra/webserver";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -10,7 +11,7 @@ beforeAll(async () => {
 });
 
 describe("PATCH to /api/v1/users/[username]", () => {
-  const url = process.env.BASE_API_V1 + "/users";
+  const url = `${webserver.origin}/api/v1/users`;
 
   describe("Anonymous user", () => {
     test("With unique `username`", async () => {

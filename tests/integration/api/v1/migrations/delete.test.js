@@ -1,5 +1,7 @@
+import webserver from "infra/webserver";
+
 describe("DELETE to /api/v1/migrations", () => {
-  const url = process.env.BASE_API_V1 + "/migrations";
+  const url = `${webserver.origin}/api/v1/migrations`;
   const method = "DELETE";
 
   describe("Anonymous user", () => {

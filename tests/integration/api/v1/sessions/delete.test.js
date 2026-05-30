@@ -1,6 +1,7 @@
 import { version as uuidVersion } from "uuid";
 import session from "models/session.js";
 import setCookieParser from "set-cookie-parser";
+import webserver from "infra/webserver";
 const { default: orchestrator } = require("tests/orchestrator");
 
 beforeAll(async () => {
@@ -10,7 +11,7 @@ beforeAll(async () => {
 });
 
 describe("DELETE /api/v1/sessions", () => {
-  const url = process.env.BASE_API_V1 + "/sessions";
+  const url = `${webserver.origin}/api/v1/sessions`;
 
   describe("Default user", () => {
     test("With valid session", async () => {
@@ -61,7 +62,7 @@ describe("DELETE /api/v1/sessions", () => {
       });
 
       const doubleCheckResponse = await fetch(
-        process.env.BASE_API_V1 + "/users",
+        `${webserver.origin}/api/v1/users`,
         {
           headers: {
             Cookie: `session_id=${sessionObject.token}`,

@@ -1,4 +1,5 @@
 import orchestrator from "tests/orchestrator";
+import webserver from "infra/webserver";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -7,7 +8,7 @@ beforeAll(async () => {
 });
 
 describe("GET to /api/v1/migrations", () => {
-  const url = process.env.BASE_API_V1 + "/migrations";
+  const url = `${webserver.origin}/api/v1/migrations`;
 
   describe("Anonymous user", () => {
     test("Retrieving pending migrations", async () => {

@@ -2,6 +2,7 @@ import { version as uuidVersion } from "uuid";
 import setCookieParser from "set-cookie-parser";
 import orchestrator from "tests/orchestrator";
 import session from "models/session.js";
+import webserver from "infra/webserver";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -10,7 +11,7 @@ beforeAll(async () => {
 });
 
 describe("POST to /api/v1/sessions", () => {
-  const url = process.env.BASE_API_V1 + "/sessions";
+  const url = `${webserver.origin}/api/v1/sessions`;
 
   describe("Anonymous user", () => {
     test("With incorrect email, but correct password", async () => {
