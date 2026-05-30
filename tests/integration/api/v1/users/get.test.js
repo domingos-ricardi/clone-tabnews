@@ -67,7 +67,7 @@ describe("GET /api/v1/users", () => {
       expect(parsedCookies.session_id).toEqual({
         name: "session_id",
         value: renewSessionObject.token,
-        maxAge: session.EXPIRATION_IN_MILISECONDS / 1000,
+        maxAge: session.EXPIRATION_IN_MILLISECONDS / 1000,
         path: "/",
         httpOnly: true,
         sameSite: "Lax",
@@ -109,7 +109,7 @@ describe("GET /api/v1/users", () => {
 
     test("With exipired session", async () => {
       jest.useFakeTimers({
-        now: new Date(Date.now() - session.EXPIRATION_IN_MILISECONDS),
+        now: new Date(Date.now() - session.EXPIRATION_IN_MILLISECONDS),
       });
       const createdUser = await orchestrator.createUser({
         username: "UserWithExpiredSession",
@@ -149,7 +149,7 @@ describe("GET /api/v1/users", () => {
 
     test("With almost expires session", async () => {
       jest.useFakeTimers({
-        now: new Date(Date.now() - (session.EXPIRATION_IN_MILISECONDS - 10000)), // 10 seconds before expiration
+        now: new Date(Date.now() - (session.EXPIRATION_IN_MILLISECONDS - 10000)), // 10 seconds before expiration
       });
 
       const createdUser = await orchestrator.createUser({
@@ -202,7 +202,7 @@ describe("GET /api/v1/users", () => {
       expect(parsedCookies.session_id).toEqual({
         name: "session_id",
         value: renewSessionObject.token,
-        maxAge: session.EXPIRATION_IN_MILISECONDS / 1000,
+        maxAge: session.EXPIRATION_IN_MILLISECONDS / 1000,
         path: "/",
         httpOnly: true,
         sameSite: "Lax",

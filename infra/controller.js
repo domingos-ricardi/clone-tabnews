@@ -39,7 +39,7 @@ function onErrorHandler(error, request, response) {
 function setSessionCookie(response, sessionToken) {
   const setCookie = cookie.serialize("session_id", sessionToken, {
     path: "/",
-    maxAge: session.EXPIRATION_IN_MILISECONDS / 1000,
+    maxAge: session.EXPIRATION_IN_MILLISECONDS / 1000,
     secure: process.env.NODE_ENV === "production" ? true : false,
     httpOnly: true,
     sameSite: "Lax",

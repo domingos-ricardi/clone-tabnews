@@ -104,7 +104,7 @@ describe("DELETE /api/v1/sessions", () => {
 
     test("With exipired session", async () => {
       jest.useFakeTimers({
-        now: new Date(Date.now() - session.EXPIRATION_IN_MILISECONDS),
+        now: new Date(Date.now() - session.EXPIRATION_IN_MILLISECONDS),
       });
       const createdUser = await orchestrator.createUser({
         username: "UserWithExpiredSession",
