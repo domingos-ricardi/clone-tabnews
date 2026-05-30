@@ -32,8 +32,8 @@ describe("POST to /api/v1/migrations", () => {
   describe("Default user", () => {
     test("Running pending migrations", async () => {
       const defaultUser = await orchestrator.createUser({});
-      await orchestrator.activateUser(defaultUser.id);
-      const sessionObject = await orchestrator.createSession(defaultUser.id);
+      await orchestrator.activateUser(defaultUser);
+      const sessionObject = await orchestrator.createSession(defaultUser);
 
       const response = await fetch(url, {
         method: method,

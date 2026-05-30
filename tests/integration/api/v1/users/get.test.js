@@ -19,9 +19,9 @@ describe("GET /api/v1/users", () => {
         username: "UserWithValidSession",
         features: ["read:activation_token"],
       });
-      const activatedUser = await orchestrator.activateUser(createdUser.id);
+      const activatedUser = await orchestrator.activateUser(createdUser);
 
-      const sessionObject = await orchestrator.createSession(createdUser.id);
+      const sessionObject = await orchestrator.createSession(createdUser);
       const response = await fetch(url, {
         headers: {
           Cookie: `session_id=${sessionObject.token}`,
@@ -113,7 +113,7 @@ describe("GET /api/v1/users", () => {
       const createdUser = await orchestrator.createUser({
         username: "UserWithExpiredSession",
       });
-      const sessionObject = await orchestrator.createSession(createdUser.id);
+      const sessionObject = await orchestrator.createSession(createdUser);
 
       jest.useRealTimers();
 
@@ -156,9 +156,9 @@ describe("GET /api/v1/users", () => {
         features: ["read:activation_token"],
       });
 
-      const activatedUser = await orchestrator.activateUser(createdUser.id);
+      const activatedUser = await orchestrator.activateUser(createdUser);
 
-      const sessionObject = await orchestrator.createSession(createdUser.id);
+      const sessionObject = await orchestrator.createSession(createdUser);
       jest.useRealTimers();
 
       const response = await fetch(url, {

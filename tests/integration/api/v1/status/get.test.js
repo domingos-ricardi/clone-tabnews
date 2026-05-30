@@ -28,11 +28,11 @@ describe("GET to /api/v1/status", () => {
   describe("Privileged user", () => {
     test("Retrieving current system status", async () => {
       const privilegedUser = await orchestrator.createUser({});
-      await orchestrator.activateUser(privilegedUser.id);
-      await orchestrator.addFeaturesToUser(privilegedUser.id, [
+      await orchestrator.activateUser(privilegedUser);
+      await orchestrator.addFeaturesToUser(privilegedUser, [
         "read:status:all",
       ]);
-      const sessionObject = await orchestrator.createSession(privilegedUser.id);
+      const sessionObject = await orchestrator.createSession(privilegedUser);
 
       const response = await fetch(url, {
         headers: {

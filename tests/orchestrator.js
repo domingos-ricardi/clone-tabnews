@@ -59,12 +59,12 @@ async function createUser(userObject) {
   });
 }
 
-async function activateUser(userId) {
-  return await activation.activateUser(userId);
+async function activateUser(userObject) {
+  return await activation.activateUser(userObject.id);
 }
 
-async function createSession(userId) {
-  return await session.create(userId);
+async function createSession(userObject) {
+  return await session.create(userObject.id);
 }
 
 async function deleteAllEmails() {
@@ -73,8 +73,8 @@ async function deleteAllEmails() {
   });
 }
 
-async function addFeaturesToUser(userId, features) {
-  return await user.addFeatures(userId, features);
+async function addFeaturesToUser(userObject, features) {
+  return await user.addFeatures(userObject.id, features);
 }
 
 async function getLastEmail() {
