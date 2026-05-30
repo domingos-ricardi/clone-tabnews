@@ -3,6 +3,7 @@ import orchestrator from "tests/orchestrator";
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
   await orchestrator.clearDatabase();
+  await orchestrator.runPendingMigrations();
 });
 
 describe("POST to /api/v1/migrations", () => {
@@ -10,27 +11,67 @@ describe("POST to /api/v1/migrations", () => {
   const method = "POST";
 
   describe("Anonymous user", () => {
-    describe("Running pending migrations", () => {
-      test("For the first time", async () => {
-        const response = await fetch(url, {
-          method: method,
-        });
-        const responseBody = await response.json();
-
-        expect(response.status).toBe(201);
-        expect(Array.isArray(responseBody)).toBe(true);
-        expect(responseBody.length).toBeGreaterThan(0);
+    test("Running pending migrations", async () => {
+      const response = await fetch(url, {
+        method: method,
       });
-      test("For the second time", async () => {
-        const response1 = await fetch(url, {
-          method: method,
-        });
-        const responseBody1 = await response1.json();
+      const responseBody = await response.json();
 
-        expect(response1.status).toBe(200);
-        expect(Array.isArray(responseBody1)).toBe(true);
-        expect(responseBody1.length).toBe(0);
+      expect(response.status).toBe(403);
+
+      expect(responseBody).toEqual({
+        name: "ForbiddenError",
+        message: "Você não possui permissão para realizar esta ação.",
+        action: "Verifique se seu usuário possui a feature necessária.",
+        statusCode: 403,
       });
+    });
+  });
+
+  describe("Default user", () => {
+    test("Running pending migrations", async () => {
+      const defaultUser = await orchestrator.createUser({});
+      await orchestrator.activateUser(defaultUser.id);
+      const sessionObject = await orchestrator.createSession(defaultUser.id);
+
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          Cookie: `session_id=${sessionObject.token}`,
+        },
+      });
+      const responseBody = await response.json();
+
+      expect(response.status).toBe(403);
+
+      expect(responseBody).toEqual({
+        name: "ForbiddenError",
+        message: "Você não possui permissão para realizar esta ação.",
+        action: "Verifique se seu usuário possui a feature necessária.",
+        statusCode: 403,
+      });
+    });
+  });
+
+  describe("Privileged user", () => {
+    test("For the first time", async () => {
+      const privilegedUser = await orchestrator.createUser({});
+      await orchestrator.activateUser(privilegedUser.id);
+      await orchestrator.addFeaturesToUser(privilegedUser.id, [
+        "create:migrations",
+      ]);
+      const sessionObject = await orchestrator.createSession(privilegedUser.id);
+
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          Cookie: `session_id=${sessionObject.token}`,
+        },
+      });
+      const responseBody = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(Array.isArray(responseBody)).toBe(true);
     });
   });
 });
