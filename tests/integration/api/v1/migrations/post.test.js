@@ -53,27 +53,4 @@ describe("POST to /api/v1/migrations", () => {
       });
     });
   });
-
-  // eslint-disable-next-line jest/no-commented-out-tests
-  // describe("Privileged user", () => {
-  //   test("For the first time", async () => {
-  //     const privilegedUser = await orchestrator.createUser({});
-  //     await orchestrator.activateUser(privilegedUser.id);
-  //     await orchestrator.addFeaturesToUser(privilegedUser.id, [
-  //       "create:migrations",
-  //     ]);
-  //     const sessionObject = await orchestrator.createSession(privilegedUser.id);
-
-  //     const response = await fetch(url, {
-  //       method: method,
-  //       headers: {
-  //         Cookie: `session_id=${sessionObject.token}`,
-  //       },
-  //     });
-  //     const responseBody = await response.json();
-
-  //     expect(response.status).toBe(200);
-  //     expect(Array.isArray(responseBody)).toBe(true);
-  //   });
-  // });
 });

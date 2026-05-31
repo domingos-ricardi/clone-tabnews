@@ -57,9 +57,7 @@ describe("GET to /api/v1/status", () => {
     test("Retrieving current system status", async () => {
       const privilegedUser = await orchestrator.createUser({});
       await orchestrator.activateUser(privilegedUser);
-      await orchestrator.addFeaturesToUser(privilegedUser, [
-        "read:status:all",
-      ]);
+      await orchestrator.addFeaturesToUser(privilegedUser, ["read:status:all"]);
       const sessionObject = await orchestrator.createSession(privilegedUser);
 
       const response = await fetch(url, {

@@ -53,9 +53,7 @@ describe("GET to /api/v1/migrations", () => {
     test("Retrieving pending migrations", async () => {
       const privilegedUser = await orchestrator.createUser({});
       await orchestrator.activateUser(privilegedUser);
-      await orchestrator.addFeaturesToUser(privilegedUser, [
-        "read:migrations",
-      ]);
+      await orchestrator.addFeaturesToUser(privilegedUser, ["read:migrations"]);
       const sessionObject = await orchestrator.createSession(privilegedUser);
 
       const response = await fetch(url, {
