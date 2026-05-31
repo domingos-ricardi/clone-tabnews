@@ -1,6 +1,7 @@
 import { version as uuidVersion } from "uuid";
 import session from "models/session.js";
 import setCookieParser from "set-cookie-parser";
+import webserver from "infra/webserver";
 const { default: orchestrator } = require("tests/orchestrator");
 
 beforeAll(async () => {
@@ -10,7 +11,7 @@ beforeAll(async () => {
 });
 
 describe("GET /api/v1/users", () => {
-  const url = process.env.BASE_API_V1 + "/users";
+  const url = `${webserver.origin}/api/v1/users`;
 
   describe("Default user", () => {
     test("With valid session", async () => {
@@ -18,9 +19,9 @@ describe("GET /api/v1/users", () => {
         username: "UserWithValidSession",
         features: ["read:activation_token"],
       });
-      const activatedUser = await orchestrator.activateUser(createdUser.id);
+      const activatedUser = await orchestrator.activateUser(createdUser);
 
-      const sessionObject = await orchestrator.createSession(createdUser.id);
+      const sessionObject = await orchestrator.createSession(createdUser);
       const response = await fetch(url, {
         headers: {
           Cookie: `session_id=${sessionObject.token}`,
@@ -66,9 +67,10 @@ describe("GET /api/v1/users", () => {
       expect(parsedCookies.session_id).toEqual({
         name: "session_id",
         value: renewSessionObject.token,
-        maxAge: session.EXPIRATION_IN_MILISECONDS / 1000,
+        maxAge: session.EXPIRATION_IN_MILLISECONDS / 1000,
         path: "/",
         httpOnly: true,
+        sameSite: "Lax",
       });
     });
 
@@ -107,12 +109,12 @@ describe("GET /api/v1/users", () => {
 
     test("With exipired session", async () => {
       jest.useFakeTimers({
-        now: new Date(Date.now() - session.EXPIRATION_IN_MILISECONDS),
+        now: new Date(Date.now() - session.EXPIRATION_IN_MILLISECONDS),
       });
       const createdUser = await orchestrator.createUser({
         username: "UserWithExpiredSession",
       });
-      const sessionObject = await orchestrator.createSession(createdUser.id);
+      const sessionObject = await orchestrator.createSession(createdUser);
 
       jest.useRealTimers();
 
@@ -147,7 +149,9 @@ describe("GET /api/v1/users", () => {
 
     test("With almost expires session", async () => {
       jest.useFakeTimers({
-        now: new Date(Date.now() - (session.EXPIRATION_IN_MILISECONDS - 10000)), // 10 seconds before expiration
+        now: new Date(
+          Date.now() - (session.EXPIRATION_IN_MILLISECONDS - 10000),
+        ), // 10 seconds before expiration
       });
 
       const createdUser = await orchestrator.createUser({
@@ -155,9 +159,9 @@ describe("GET /api/v1/users", () => {
         features: ["read:activation_token"],
       });
 
-      const activatedUser = await orchestrator.activateUser(createdUser.id);
+      const activatedUser = await orchestrator.activateUser(createdUser);
 
-      const sessionObject = await orchestrator.createSession(createdUser.id);
+      const sessionObject = await orchestrator.createSession(createdUser);
       jest.useRealTimers();
 
       const response = await fetch(url, {
@@ -200,9 +204,10 @@ describe("GET /api/v1/users", () => {
       expect(parsedCookies.session_id).toEqual({
         name: "session_id",
         value: renewSessionObject.token,
-        maxAge: session.EXPIRATION_IN_MILISECONDS / 1000,
+        maxAge: session.EXPIRATION_IN_MILLISECONDS / 1000,
         path: "/",
         httpOnly: true,
+        sameSite: "Lax",
       });
     });
   });

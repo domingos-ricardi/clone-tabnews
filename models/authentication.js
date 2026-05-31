@@ -6,7 +6,7 @@ import {
   NotMatchError,
 } from "infra/errors/api-errors.js";
 
-async function validateAndReturn(providedEmail, providedPassword) {
+async function getUser(providedEmail, providedPassword) {
   try {
     const storedUser = await user.findOneByEmail(providedEmail);
     await validatePass(providedPassword, storedUser.password);
@@ -25,7 +25,7 @@ async function validatePass(password, storedHashpass) {
 }
 
 const authentication = {
-  validateAndReturn,
+  getUser,
 };
 
 export default authentication;

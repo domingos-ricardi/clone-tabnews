@@ -5,6 +5,7 @@ import migrator from "models/migrator.js";
 import user from "models/user.js";
 import session from "models/session.js";
 import activation from "models/activation";
+import webserver from "infra/webserver";
 
 const urlMailHttp = `http://${process.env.EMAIL_HTTP_HOST}:${process.env.EMAIL_HTTP_PORT}`;
 
@@ -19,7 +20,7 @@ async function waitForAllServices() {
     });
 
     async function fetchStatusPage() {
-      const response = await fetch(process.env.BASE_API_V1 + "/status");
+      const response = await fetch(`${webserver.origin}/api/v1/status`);
 
       if (response.status !== 200)
         throw new Error("HTTP Error: ${response.status }");
@@ -58,12 +59,12 @@ async function createUser(userObject) {
   });
 }
 
-async function activateUser(userId) {
-  return await activation.activateUser(userId);
+async function activateUser(userObject) {
+  return await activation.activateUser(userObject.id);
 }
 
-async function createSession(userId) {
-  return await session.create(userId);
+async function createSession(userObject) {
+  return await session.create(userObject.id);
 }
 
 async function deleteAllEmails() {
@@ -72,8 +73,8 @@ async function deleteAllEmails() {
   });
 }
 
-async function addFeaturesToUser(userId, features) {
-  return await user.addFeatures(userId, features);
+async function addFeaturesToUser(userObject, features) {
+  return await user.addFeatures(userObject.id, features);
 }
 
 async function getLastEmail() {

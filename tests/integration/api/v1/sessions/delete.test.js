@@ -1,6 +1,7 @@
 import { version as uuidVersion } from "uuid";
 import session from "models/session.js";
 import setCookieParser from "set-cookie-parser";
+import webserver from "infra/webserver";
 const { default: orchestrator } = require("tests/orchestrator");
 
 beforeAll(async () => {
@@ -10,13 +11,13 @@ beforeAll(async () => {
 });
 
 describe("DELETE /api/v1/sessions", () => {
-  const url = process.env.BASE_API_V1 + "/sessions";
+  const url = `${webserver.origin}/api/v1/sessions`;
 
   describe("Default user", () => {
     test("With valid session", async () => {
       const createdUser = await orchestrator.createUser({});
 
-      const sessionObject = await orchestrator.createSession(createdUser.id);
+      const sessionObject = await orchestrator.createSession(createdUser);
       const response = await fetch(url, {
         method: "DELETE",
         headers: {
@@ -61,7 +62,7 @@ describe("DELETE /api/v1/sessions", () => {
       });
 
       const doubleCheckResponse = await fetch(
-        process.env.BASE_API_V1 + "/users",
+        `${webserver.origin}/api/v1/users`,
         {
           headers: {
             Cookie: `session_id=${sessionObject.token}`,
@@ -103,12 +104,12 @@ describe("DELETE /api/v1/sessions", () => {
 
     test("With exipired session", async () => {
       jest.useFakeTimers({
-        now: new Date(Date.now() - session.EXPIRATION_IN_MILISECONDS),
+        now: new Date(Date.now() - session.EXPIRATION_IN_MILLISECONDS),
       });
       const createdUser = await orchestrator.createUser({
         username: "UserWithExpiredSession",
       });
-      const sessionObject = await orchestrator.createSession(createdUser.id);
+      const sessionObject = await orchestrator.createSession(createdUser);
 
       jest.useRealTimers();
 

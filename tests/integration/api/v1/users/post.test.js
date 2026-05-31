@@ -1,5 +1,6 @@
 import { version as uuidVersion } from "uuid";
 import orchestrator from "tests/orchestrator";
+import webserver from "infra/webserver";
 import user from "models/user.js";
 import criptography from "models/criptography.js";
 
@@ -10,7 +11,7 @@ beforeAll(async () => {
 });
 
 describe("POST to /api/v1/users", () => {
-  const url = process.env.BASE_API_V1 + "/users";
+  const url = `${webserver.origin}/api/v1/users`;
   const method = "POST";
 
   describe("Anonymous user", () => {
@@ -132,8 +133,8 @@ describe("POST to /api/v1/users", () => {
   describe("Default user", () => {
     test("With unique and valid data", async () => {
       const user1 = await orchestrator.createUser({});
-      await orchestrator.activateUser(user1.id);
-      const user1SessionObject = await orchestrator.createSession(user1.id);
+      await orchestrator.activateUser(user1);
+      const user1SessionObject = await orchestrator.createSession(user1);
 
       const user2Response = await fetch(url, {
         method: method,

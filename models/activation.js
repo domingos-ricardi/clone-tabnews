@@ -5,10 +5,10 @@ import { ForbiddenError, NotFoundError } from "infra/errors/api-errors.js";
 import user from "models/user.js";
 import authorization from "models/authorization.js";
 
-const EXPIRATION_IN_MILISECONDS = 60 * 15 * 1000; // 15 minutes
+const EXPIRATION_IN_MILLISECONDS = 60 * 15 * 1000; // 15 minutes
 
 async function create(userId) {
-  const expiresAt = new Date(Date.now() + EXPIRATION_IN_MILISECONDS);
+  const expiresAt = new Date(Date.now() + EXPIRATION_IN_MILLISECONDS);
   const newToken = await runInsertQuery(userId, expiresAt);
   return newToken;
 
@@ -133,7 +133,7 @@ const activation = {
   sendEmailToUser,
   markAsUsed,
   activateUser,
-  EXPIRATION_IN_MILISECONDS,
+  EXPIRATION_IN_MILLISECONDS,
 };
 
 export default activation;

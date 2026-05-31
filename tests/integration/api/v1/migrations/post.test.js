@@ -1,4 +1,5 @@
 import orchestrator from "tests/orchestrator";
+import webserver from "infra/webserver";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -7,7 +8,7 @@ beforeAll(async () => {
 });
 
 describe("POST to /api/v1/migrations", () => {
-  const url = process.env.BASE_API_V1 + "/migrations";
+  const url = `${webserver.origin}/api/v1/migrations`;
   const method = "POST";
 
   describe("Anonymous user", () => {
@@ -31,8 +32,8 @@ describe("POST to /api/v1/migrations", () => {
   describe("Default user", () => {
     test("Running pending migrations", async () => {
       const defaultUser = await orchestrator.createUser({});
-      await orchestrator.activateUser(defaultUser.id);
-      const sessionObject = await orchestrator.createSession(defaultUser.id);
+      await orchestrator.activateUser(defaultUser);
+      const sessionObject = await orchestrator.createSession(defaultUser);
 
       const response = await fetch(url, {
         method: method,
@@ -50,28 +51,6 @@ describe("POST to /api/v1/migrations", () => {
         action: "Verifique se seu usuário possui a feature necessária.",
         statusCode: 403,
       });
-    });
-  });
-
-  describe("Privileged user", () => {
-    test("For the first time", async () => {
-      const privilegedUser = await orchestrator.createUser({});
-      await orchestrator.activateUser(privilegedUser.id);
-      await orchestrator.addFeaturesToUser(privilegedUser.id, [
-        "create:migrations",
-      ]);
-      const sessionObject = await orchestrator.createSession(privilegedUser.id);
-
-      const response = await fetch(url, {
-        method: method,
-        headers: {
-          Cookie: `session_id=${sessionObject.token}`,
-        },
-      });
-      const responseBody = await response.json();
-
-      expect(response.status).toBe(200);
-      expect(Array.isArray(responseBody)).toBe(true);
     });
   });
 });

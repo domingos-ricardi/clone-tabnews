@@ -15,7 +15,7 @@ describe("Use case: Registration Flow (all successful)", () => {
   let activationTokenObj;
   let createSessionResponseBody;
   test("Create user account", async () => {
-    const createUserResponse = await fetch(process.env.BASE_API_V1 + "/users", {
+    const createUserResponse = await fetch(`${webserver.origin}/api/v1/users`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -61,7 +61,7 @@ describe("Use case: Registration Flow (all successful)", () => {
 
   test("Activate account", async () => {
     const activateResponse = await fetch(
-      process.env.BASE_API_V1 + `/activations/${activationTokenObj.id}`,
+      `${webserver.origin}/api/v1/activations/${activationTokenObj.id}`,
       {
         method: "PATCH",
       },
@@ -83,7 +83,7 @@ describe("Use case: Registration Flow (all successful)", () => {
   });
 
   test("Login", async () => {
-    const response = await fetch(process.env.BASE_API_V1 + "sessions", {
+    const response = await fetch(`${webserver.origin}/api/v1/sessions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -101,7 +101,7 @@ describe("Use case: Registration Flow (all successful)", () => {
   });
 
   test("Get user information", async () => {
-    const userResponse = await fetch(process.env.BASE_API_V1 + "/users", {
+    const userResponse = await fetch(`${webserver.origin}/api/v1/users`, {
       headers: {
         Cookie: `session_id=${createSessionResponseBody.token}`,
       },

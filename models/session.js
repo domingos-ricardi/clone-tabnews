@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import database from "infra/database.js";
 import { UnauthorizedError } from "infra/errors/api-errors";
 
-const EXPIRATION_IN_MILISECONDS = 1000 * 60 * 60 * 24 * 30; // 30 dias
+const EXPIRATION_IN_MILLISECONDS = 1000 * 60 * 60 * 24 * 30; // 30 dias
 
 async function findOneValidByToken(token) {
   const sessionFound = await runSelectQuery(token);
@@ -28,7 +28,7 @@ async function findOneValidByToken(token) {
 
 async function create(userId) {
   const token = crypto.randomBytes(48).toString("hex");
-  const expiresAt = new Date(Date.now() + EXPIRATION_IN_MILISECONDS);
+  const expiresAt = new Date(Date.now() + EXPIRATION_IN_MILLISECONDS);
 
   const newSession = await runInsertQuery(token, userId, expiresAt);
   return newSession;
@@ -48,7 +48,7 @@ async function create(userId) {
 }
 
 async function renew(id) {
-  const expiresAt = new Date(Date.now() + EXPIRATION_IN_MILISECONDS);
+  const expiresAt = new Date(Date.now() + EXPIRATION_IN_MILLISECONDS);
   const renewedSession = await runUpdateQuery(id, expiresAt);
   return renewedSession;
 
@@ -90,7 +90,7 @@ const session = {
   findOneValidByToken,
   renew,
   expireById,
-  EXPIRATION_IN_MILISECONDS,
+  EXPIRATION_IN_MILLISECONDS,
 };
 
 export default session;
