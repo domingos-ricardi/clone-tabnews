@@ -1,5 +1,12 @@
-import "../styles/general-styles.css";
+import "@primer/primitives/dist/css/functional/themes/light.css"
+
+import { ThemeProvider, BaseStyles } from "@primer/react";
+
 
 export default function CloneTabNews({ Component, pageProps }) {
-  return <Component {...pageProps} />;
+  return <ThemeProvider>
+            <BaseStyles>
+              <Component {...pageProps} />
+            </BaseStyles>
+          </ThemeProvider>
 }
