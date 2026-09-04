@@ -1,5 +1,11 @@
+import DefaultLayout from "interface/DefaultLayout";
+
 function Home() {
-  return <h1>Página em Construção</h1>;
+  return (
+    <DefaultLayout>
+      <h1>Página em Construção</h1>
+    </DefaultLayout>
+  );
 }
 
 export default Home;

@@ -1,6 +1,4 @@
-//import { useState, useEffect } from "react";
-import style from "../status/status.module.css";
-//import CapsLock from "components/caps-lock";
+import DefaultLayout from "interface/DefaultLayout";
 import useSwr from "swr";
 
 async function fetchAPI(key) {
@@ -26,10 +24,12 @@ export default function Status() {
   if (isLoading) return <p>Loading...</p>;*/
 
   return (
-    <div className={style.main}>
-      <div className={style.title}>Tab Status</div>
-      <UpdateAt />
-    </div>
+    <DefaultLayout>
+      <div>
+        <div>Tab Status</div>
+        <UpdateAt />
+      </div>
+    </DefaultLayout>
   );
 }
 
